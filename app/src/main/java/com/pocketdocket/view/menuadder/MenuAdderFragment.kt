@@ -42,7 +42,9 @@ class MenuAdderFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 //        val listv = view.findViewById<ListView>(R.id.recipe_list_view)
-        val textInpLay = view.findViewById<TextInputLayout>(R.id.textinput)
+        val submitContainer = view.findViewById<LinearLayout>(R.id.addMenuInputContainer)
+        val submitButt =  view.findViewById<Button>(R.id.addMenuNameButton)
+        val textInpLay = view.findViewById<TextInputLayout>(R.id.textInputLay)
         val textEditInp = view.findViewById<TextInputEditText>(R.id.textintedit)
 
         val floatAddButton = view.findViewById<FloatingActionButton>(R.id.fabAddMenu)
@@ -54,28 +56,33 @@ class MenuAdderFragment : Fragment() {
         recyView.layoutManager = layoutMan
         recyView.adapter = menuAdapter
 
-
-
-//        view.findViewById<Button>(R.id.addMenuNameButton).setOnClickListener {
-//            // Get name input  and store name onto app
-//            val txt = view.findViewById<EditText>(R.id.menuNameInput)
-//            this.listOfMenus.add(txt.text.toString())
-//
-//            this.updateListView(listv, view.context)
-//        }
-
         val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
+        submitButt.setOnClickListener {
+            // Get name input  and store name onto app
+            val txt = view.findViewById<TextInputEditText>(R.id.textintedit)
+//            this.listOfMenus.add(Catalogue(txt.text.toString()))
+
+            MenuRepository.addMenu(Catalogue(txt.text.toString()))
+
+            menuAdapter.notifyItemInserted(listOfMenus.count() - 1);
+
+            submitContainer.visibility = View.VISIBLE
+            // hide keyboard
+            imm.hideSoftInputFromWindow(textEditInp.windowToken, 0)
+        }
 
         floatAddButton.setOnClickListener {
             // Get name input  and store name onto app
-            var visible = textInpLay.visibility
+            var visible = submitContainer.visibility
 
             if(visible == View.VISIBLE) {
-                textInpLay.visibility = View.INVISIBLE
+                submitContainer.visibility = View.INVISIBLE
             }
             else {
-                textInpLay.visibility = View.VISIBLE
+                submitContainer.visibility = View.VISIBLE
                 floatAddButton.visibility = View.INVISIBLE
+                println(submitContainer.visibility)
                 // Focus on the text input layout so the user can start typing
                 textInpLay.requestFocus()
                 // Show the soft keyboard to let the user type
@@ -91,10 +98,12 @@ class MenuAdderFragment : Fragment() {
             if (keyCode == KeyEvent.KEYCODE_ENTER) {
                 val menu = Catalogue(textEditInp.text.toString())
 
-                listOfMenus.add(menu)
+//                listOfMenus.add(menu)
+                MenuRepository.addMenu(menu)
+
                 menuAdapter.notifyItemInserted(listOfMenus.count() - 1)
 
-                textInpLay.visibility = View.INVISIBLE
+                submitContainer.visibility = View.INVISIBLE
                 // hide keyboard
                 imm.hideSoftInputFromWindow(textEditInp.windowToken, 0)
 //                floatAddButton.visibility = View.VISIBLE
@@ -121,11 +130,11 @@ class MenuAdderFragment : Fragment() {
 
                 if (heightDiff > 400) { // Value should be less than keyboard's height
                     floatAddButton.visibility = View.INVISIBLE
-                    textInpLay.visibility = View.VISIBLE
+                    submitContainer.visibility=View.VISIBLE
                     textInpLay.requestFocus()
                 } else {
                     floatAddButton.visibility = View.VISIBLE
-                    textInpLay.visibility = View.INVISIBLE
+                    submitContainer.visibility=View.INVISIBLE
                 }
             }
         })

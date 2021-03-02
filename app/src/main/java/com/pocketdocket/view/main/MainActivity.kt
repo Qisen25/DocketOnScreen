@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
 import android.widget.FrameLayout
 import com.pocketdocket.R
+import com.pocketdocket.model.MenuRepository
 
 /**
  * Main
@@ -25,6 +26,8 @@ class MainActivity : AppCompatActivity() {
             var ft = supportFragmentManager.beginTransaction();
             ft.replace(R.id.mainContainer, frag).commit()
         }
+
+        MenuRepository.load(applicationContext)
     }
 
 //    override fun onCreateOptionsMenu(menu: Menu): Boolean {
