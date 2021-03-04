@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import com.pocketdocket.R
-import com.pocketdocket.view.menuadder.AddMenuFragment
+import com.pocketdocket.view.catalogueadder.AddCatalogueBaseFragment
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -30,7 +30,7 @@ class MainMenuFragment : Fragment() {
 //        }
 
         view.findViewById<Button>(R.id.addEditMenuButton).setOnClickListener { view ->
-            val frag = AddMenuFragment.newInstance()
+            val frag = AddCatalogueBaseFragment.newInstance()
             this.openAddMenuFrag(frag)
         }
     }

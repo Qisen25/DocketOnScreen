@@ -2,16 +2,15 @@ package com.pocketdocket.model
 
 import android.content.ContentValues
 import android.content.Context
-import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.pocketdocket.database.AppDatabaseHelper
-import com.pocketdocket.database.MenuCursor
+import com.pocketdocket.database.CatalogueCursor
 import com.pocketdocket.database.SchemaInfo
 
 /**
  * Singleton class for storing and caching existing menu items at run time
  */
-class MenuRepository {
+class CatalogueRepository {
     companion object {
         var menus: MutableList<Catalogue> = mutableListOf<Catalogue>()
         private lateinit var db: SQLiteDatabase
@@ -30,7 +29,7 @@ class MenuRepository {
          */
         fun loadMenus(db: SQLiteDatabase) {
 
-            val menuCurs = MenuCursor(db.query(SchemaInfo.Menus.TABLE_NAME, null, null, null, null, null, null))
+            val menuCurs = CatalogueCursor(db.query(SchemaInfo.Menus.TABLE_NAME, null, null, null, null, null, null))
 
             try{
                 menuCurs.moveToFirst()

@@ -1,4 +1,4 @@
-package com.pocketdocket.view.menuadder
+package com.pocketdocket.view.catalogueadder
 
 import android.os.Build
 import android.os.Bundle
@@ -14,16 +14,20 @@ import com.pocketdocket.R
 /**
  * Base fragment for enabling nesting of adding/editing menu fragment and add item/dish fragment
  */
-class AddMenuFragment : Fragment() {
+class AddCatalogueBaseFragment : Fragment() {
 
     private val listOfMenus: MutableList<String> = mutableListOf()
+
+    companion object {
+        fun newInstance(): AddCatalogueBaseFragment = AddCatalogueBaseFragment()
+    }
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_addmenu, container, false)
+        return inflater.inflate(R.layout.fragment_catalogue_base, container, false)
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -35,7 +39,8 @@ class AddMenuFragment : Fragment() {
         activity?.setActionBar(tb)
         activity?.actionBar?.setDisplayHomeAsUpEnabled(true)
         activity?.actionBar?.setDisplayShowHomeEnabled(true)
-        activity?.actionBar?.setDisplayShowTitleEnabled(false);
+//        activity?.actionBar?.setDisplayShowTitleEnabled(false)
+        tb.title = ""
 
         tb.setNavigationOnClickListener {
             // Go back to previous fragment (Should be the Main Menu
@@ -45,15 +50,11 @@ class AddMenuFragment : Fragment() {
         this.setupMenuAdder()
     }
 
-    companion object {
-        fun newInstance(): AddMenuFragment = AddMenuFragment()
-    }
-
     /**
      * Set up a nested fragment that allows user to add a menu
      */
     private fun setupMenuAdder() {
-        val adderFrag = MenuAdderFragment.newInstance()
+        val adderFrag = AddCatalogueFragment.newInstance()
         parentFragmentManager.beginTransaction().replace(R.id.addMenuContainer, adderFrag).commit()
     }
 

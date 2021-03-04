@@ -1,4 +1,4 @@
-package com.pocketdocket.view.menuadder
+package com.pocketdocket.view.catalogueadder
 
 import android.content.Context
 import android.os.Build
@@ -7,7 +7,6 @@ import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.annotation.RequiresApi
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,17 +15,17 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.pocketdocket.R
 import com.pocketdocket.model.Catalogue
-import com.pocketdocket.model.MenuRepository
+import com.pocketdocket.model.CatalogueRepository
 
 /**
  * Fragment class that handles the adding and editing menus
  */
-class MenuAdderFragment : Fragment() {
+class AddCatalogueFragment : Fragment() {
 
-   private var listOfMenus: MutableList<Catalogue> = MenuRepository.menus
+   private var listOfMenus: MutableList<Catalogue> = CatalogueRepository.menus
 
     companion object {
-        fun newInstance(): MenuAdderFragment = MenuAdderFragment()
+        fun newInstance(): AddCatalogueFragment = AddCatalogueFragment()
     }
 
     override fun onCreateView(
@@ -34,7 +33,7 @@ class MenuAdderFragment : Fragment() {
             savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_addmenu_part, container, false)
+        return inflater.inflate(R.layout.fragment_catalogue_addmenu, container, false)
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -46,11 +45,12 @@ class MenuAdderFragment : Fragment() {
         val submitButt =  view.findViewById<Button>(R.id.addMenuNameButton)
         val textInpLay = view.findViewById<TextInputLayout>(R.id.textInputLay)
         val textEditInp = view.findViewById<TextInputEditText>(R.id.textintedit)
+        val tb = view.rootView.findViewById<Toolbar>(R.id.toolbar)
 
         val floatAddButton = view.findViewById<FloatingActionButton>(R.id.fabAddMenu)
 
         // Setup recycle view for list menus
-        val recyView = view.findViewById<RecyclerView>(R.id.recycleList)
+        val recyView = view.findViewById<RecyclerView>(R.id.menuRecycleList)
         val menuAdapter = MenuRecyclerViewAdapter(this.listOfMenus)
         val layoutMan = LinearLayoutManager(context)
         recyView.layoutManager = layoutMan
@@ -58,12 +58,11 @@ class MenuAdderFragment : Fragment() {
 
         val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
-        submitButt.setOnClickListener {
-            // Get name input  and store name onto app
-            val txt = view.findViewById<TextInputEditText>(R.id.textintedit)
-//            this.listOfMenus.add(Catalogue(txt.text.toString()))
+        tb.title = "Menus"
 
-            MenuRepository.addMenu(Catalogue(txt.text.toString()))
+        submitButt.setOnClickListener {
+//            this.listOfMenus.add(Catalogue(txt.text.toString()))
+            CatalogueRepository.addMenu(Catalogue(textEditInp.text.toString()))
 
             menuAdapter.notifyItemInserted(listOfMenus.count() - 1);
 
@@ -88,10 +87,6 @@ class MenuAdderFragment : Fragment() {
                 // Show the soft keyboard to let the user type
                 imm.showSoftInput(textEditInp, InputMethodManager.SHOW_IMPLICIT)
             }
-//            val txt = view.findViewById<EditText>(R.id.menuNameInput)
-//            this.listOfMenus.add(txt.text.toString())
-//
-//            this.updateListView(listv, view.context)
         }
 
         textEditInp.setOnKeyListener { v, keyCode, event ->
@@ -99,7 +94,7 @@ class MenuAdderFragment : Fragment() {
                 val menu = Catalogue(textEditInp.text.toString())
 
 //                listOfMenus.add(menu)
-                MenuRepository.addMenu(menu)
+                CatalogueRepository.addMenu(menu)
 
                 menuAdapter.notifyItemInserted(listOfMenus.count() - 1)
 
@@ -121,7 +116,6 @@ class MenuAdderFragment : Fragment() {
             }
         }
 
-
         view.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 val heightDiff: Int = view.rootView.height - view.height
@@ -138,25 +132,7 @@ class MenuAdderFragment : Fragment() {
                 }
             }
         })
-//        listv.setOnItemClickListener { parent, view, position, id ->
-            // Bundle name and send to item adder fragment
-//            val itemFrag = AddItemFragment.newInstance()
-//            val bundle = bundleOf(Pair("MenuName", listv.getItemAtPosition(position)))
-//            itemFrag.arguments = bundle
-//
-//            // use previous fragment manager
-//            parentFragmentManager.beginTransaction().replace(R.id.addMenuContainer, itemFrag).addToBackStack(null).commit()
-//        }
-//
-//        this.updateListView(listv, view.context)
     }
-
-//    private fun updateListView(listv: ListView, context: Context) {
-//        // Get adapter to plug in listOfMenus
-//        val adapter = ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, this.listOfMenus)
-//        // update list view
-//        listv.adapter = adapter
-//    }
 
     /**
      * Recycler view class for handling list view of menu names
@@ -179,7 +155,7 @@ class MenuAdderFragment : Fragment() {
 
             override fun onClick(v: View?) {
                 val itemFrag = AddItemFragment.newInstance()
-                val bundle = bundleOf(Pair("MenuName", recycleList[adapterPosition].name))
+                val bundle = Bundle().apply { putParcelable("Menu", recycleList[adapterPosition]) }
                 itemFrag.arguments = bundle
 
                 // use previous fragment manager
@@ -202,6 +178,5 @@ class MenuAdderFragment : Fragment() {
         override fun getItemCount(): Int {
             return recycleList.count()
         }
-
     }
 }
