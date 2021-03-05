@@ -6,10 +6,11 @@ import android.os.Parcelable
 data class Catalogue(val name: String?) : Parcelable {
 
     private var items: MutableList<Item> = mutableListOf<Item>()
+    var id: Int = 0
 
-    init {
-        items.add(Item("poop", 100.0, "pop", "My dinner yummeee"))
-    }
+//    init {
+//        items.add(Item("poop", 100.0, "pop", "My dinner yummeee"))
+//    }
 
     constructor(parcel: Parcel) : this(parcel.readString()) {
 
@@ -25,6 +26,10 @@ data class Catalogue(val name: String?) : Parcelable {
 
     fun getItems(): MutableList<Item> {
         return this.items
+    }
+
+    fun setItems(list: MutableList<Item>) {
+        this.items = list
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {

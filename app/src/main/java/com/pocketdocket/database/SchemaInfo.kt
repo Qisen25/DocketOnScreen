@@ -17,6 +17,7 @@ object SchemaInfo {
             "${Items.COLUMN_NAME} TEXT," +
             "${Items.COLUMN_PRICE} REAL," +
             "${Items.COLUMN_CATEGORY} TEXT," +
+            "${Items.COLUMN_DESCRIPTION} TEXT," +
             "${Items.COLUMN_MENU_ID} INTEGER," +
             "FOREIGN KEY(${Items.COLUMN_MENU_ID}) REFERENCES ${Menus.TABLE_NAME}(_id) )"
 
@@ -45,6 +46,7 @@ object SchemaInfo {
         const val COLUMN_NAME = "name"
         const val COLUMN_PRICE = "price"
         const val COLUMN_CATEGORY = "category"
+        const val COLUMN_DESCRIPTION = "description"
         const val COLUMN_MENU_ID = "menuId"
     }
 

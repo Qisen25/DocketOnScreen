@@ -18,6 +18,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import com.pocketdocket.R
 import com.pocketdocket.model.Catalogue
+import com.pocketdocket.model.CatalogueRepository
 import com.pocketdocket.model.Item
 
 /**
@@ -65,13 +66,18 @@ class AddItemFragment : Fragment() {
             itemDec.setDrawable(context?.getDrawable(R.drawable.divider)!!)
             recycView.addItemDecoration(itemDec)
 
+            println("Current cata " + currMenu.id)
 
             fabAdditem.setOnClickListener {
+//                println("Count " + CatalogueRepository.loadItems(0).count())
                 showAddItemPopUp()
             }
         }
     }
 
+    /**
+     * Shows a dialog to add item details
+     */
     private fun showAddItemPopUp() {
         val addItemDialog = Dialog(requireContext())
         addItemDialog.setContentView(R.layout.additem_dialog)
@@ -84,11 +90,11 @@ class AddItemFragment : Fragment() {
 
         saveItemButt.setOnClickListener {
             val name = nameEditText.text.toString()
-            val price = priceEditText.text.toString().toDouble()
+            val price = if(priceEditText.text.toString().isNullOrEmpty()) 0.0 else priceEditText.text.toString().toDouble()
             val categ = if (categoryEditText.text.isNullOrEmpty()) "" else categoryEditText.text.toString()
             val desc = if (descEditText.text.isNullOrEmpty()) "" else descEditText.text.toString()
 
-            currMenu.getItems().add(Item(name, price, categ, desc))
+            CatalogueRepository.addItem(currMenu, Item(name, price, categ, desc))
 
             itemAdapter.notifyItemInserted(currMenu.getItems().count() - 1)
 

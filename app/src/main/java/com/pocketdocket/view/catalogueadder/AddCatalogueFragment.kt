@@ -81,7 +81,6 @@ class AddCatalogueFragment : Fragment() {
             else {
                 submitContainer.visibility = View.VISIBLE
                 floatAddButton.visibility = View.INVISIBLE
-                println(submitContainer.visibility)
                 // Focus on the text input layout so the user can start typing
                 textInpLay.requestFocus()
                 // Show the soft keyboard to let the user type
@@ -119,8 +118,6 @@ class AddCatalogueFragment : Fragment() {
         view.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 val heightDiff: Int = view.rootView.height - view.height
-
-                println(heightDiff)
 
                 if (heightDiff > 400) { // Value should be less than keyboard's height
                     floatAddButton.visibility = View.INVISIBLE

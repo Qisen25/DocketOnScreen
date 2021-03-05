@@ -45,4 +45,7 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    // Swiping library by daimajia
+    implementation "com.daimajia.swipelayout:library:1.2.0@aar"
 }
