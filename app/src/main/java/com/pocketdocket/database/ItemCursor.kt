@@ -13,7 +13,7 @@ class ItemCursor(cursor: Cursor) : CursorWrapper(cursor) {
         val desc = getString(getColumnIndex(SchemaInfo.Items.COLUMN_DESCRIPTION))
 
         val item = Item(name, price, category, desc)
-        item.id = getInt(getColumnIndex("_id"))
+        item.dbPrimaryId = getInt(getColumnIndex("_id"))
         item.menuId = getInt(getColumnIndex(SchemaInfo.Items.COLUMN_MENU_ID))
 
         return item

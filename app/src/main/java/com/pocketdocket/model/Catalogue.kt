@@ -6,7 +6,7 @@ import android.os.Parcelable
 data class Catalogue(val name: String?) : Parcelable {
 
     private var items: MutableList<Item> = mutableListOf<Item>()
-    var id: Int = 0
+    var dbPrimaryId: Int = 0
 
 //    init {
 //        items.add(Item("poop", 100.0, "pop", "My dinner yummeee"))

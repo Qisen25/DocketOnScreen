@@ -1,8 +1,8 @@
 package com.pocketdocket.model
 
-data class Item(val name: String, val price: Double, val category: String, val description: String) {
+data class Item(var name: String, var price: Double, var category: String, var description: String) {
 
-    var id = 0
+    var dbPrimaryId = 0
     var menuId = 0
     var currencySign = "$"
 

@@ -37,7 +37,7 @@ class CatalogueRepository {
                 menuCurs.moveToFirst()
                 while (!menuCurs.isAfterLast) {
                     val menu = menuCurs.getMenu()
-                    val itemList = loadItems(menu.id)
+                    val itemList = loadItems(menu.dbPrimaryId)
                     menu.setItems(itemList)
                     menus.add(menu)
                     menuCurs.moveToNext()
@@ -77,7 +77,7 @@ class CatalogueRepository {
             // Set item index, sqlite auto increments and follows this pattern
             // eg. start at index 1 if list count is 0 to follow sql convention where primary key integers start 1 by default
             menuCount++
-            cat.id = menuCount
+            cat.dbPrimaryId = menuCount
             menus.add(cat)
 
             // Primary key is auto incremented in this step but it also matches above step
@@ -87,7 +87,7 @@ class CatalogueRepository {
         }
 
         fun addItem(menu: Catalogue, item: Item) {
-            item.menuId = menu.id
+            item.menuId = menu.dbPrimaryId
             menu.getItems().add(item)
 
             val cv = ContentValues()
@@ -97,6 +97,30 @@ class CatalogueRepository {
             cv.put(SchemaInfo.Items.COLUMN_DESCRIPTION, item.description)
             cv.put(SchemaInfo.Items.COLUMN_MENU_ID, item.menuId)
             db.insert(SchemaInfo.Items.TABLE_NAME, null, cv)
+        }
+
+        fun removeItem(menu: Catalogue, item: Item): Int {
+            val index = menu.getItems().indexOf(item)
+
+            val whereArgs = arrayOf(item.dbPrimaryId.toString())
+            db.delete(SchemaInfo.Items.TABLE_NAME, "_id = ?", whereArgs)
+
+            // remove from menu's item list
+            menu.removeItem(item)
+
+            return index
+        }
+
+        fun updateItem(item: Item) {
+
+            val cv = ContentValues()
+            cv.put(SchemaInfo.Items.COLUMN_NAME, item.name)
+            cv.put(SchemaInfo.Items.COLUMN_PRICE, item.price)
+            cv.put(SchemaInfo.Items.COLUMN_CATEGORY, item.category)
+            cv.put(SchemaInfo.Items.COLUMN_DESCRIPTION, item.description)
+
+            val whereArgs = arrayOf(item.dbPrimaryId.toString())
+            db.update(SchemaInfo.Items.TABLE_NAME, cv,"_id = ? ", whereArgs)
         }
     }
 }

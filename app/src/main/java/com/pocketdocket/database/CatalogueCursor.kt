@@ -11,7 +11,7 @@ class CatalogueCursor(cursor: Cursor) : CursorWrapper(cursor) {
         val id = getInt(getColumnIndex("_id"))
 
         val menu = Catalogue(name)
-        menu.id = id
+        menu.dbPrimaryId = id
 
         return menu
     }
