@@ -1,6 +1,7 @@
 package com.pocketdocket.view.catalogueadder
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.*
@@ -16,6 +17,9 @@ import com.google.android.material.textfield.TextInputLayout
 import com.pocketdocket.R
 import com.pocketdocket.model.Catalogue
 import com.pocketdocket.model.CatalogueRepository
+import com.pocketdocket.myswiper.helper.MyButton
+import com.pocketdocket.myswiper.helper.MySwipeHelper
+import com.pocketdocket.myswiper.listeners.MyButtonClickListener
 
 /**
  * Fragment class that handles the adding and editing menus
@@ -55,6 +59,23 @@ class AddCatalogueFragment : Fragment() {
         val layoutMan = LinearLayoutManager(context)
         recyView.layoutManager = layoutMan
         recyView.adapter = menuAdapter
+
+        // Add My own Swiper
+        val swipe = object: MySwipeHelper(context, recyView, 200) {
+            override fun instantiateMyButton(viewHolder: RecyclerView.ViewHolder, buffer: MutableList<MyButton>) {
+                buffer.add(MyButton(context,
+                "Delete",
+                30,
+                0,
+                Color.parseColor("#FF3C30"),
+                object: MyButtonClickListener{
+                    override fun onClick(pos: Int) {
+                        Toast.makeText(context, "Delete pressed", Toast.LENGTH_SHORT).show()
+                    }
+
+                }))
+            }
+        }
 
         val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 

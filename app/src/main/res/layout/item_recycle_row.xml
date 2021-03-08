@@ -10,31 +10,56 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
-        android:id="@+id/bottom_wraper"
-        android:layout_width="240dp"
+        android:id="@+id/swipeOptions"
+        android:layout_width="200dp"
         android:weightSum="2"
         android:orientation="horizontal"
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/Edit"
-            android:layout_width="1dp"
+            android:id="@+id/editButton"
+            android:layout_width="2dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="#0076a5"
             android:gravity="center"
-            android:text="Edit"
+            android:drawableLeft="@drawable/ic_baseline_edit_24"
+            android:paddingLeft="40dp"
             android:textColor="#fff"/>
 
-        <TextView
-            android:id="@+id/Delete"
+        <LinearLayout
             android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="#ff0000"
-            android:gravity="center"
-            android:text="Delete"
-            android:textColor="#fff"/>
+            android:orientation="vertical"
+            android:weightSum="9"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/deleteButton"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="#ff0000"
+                android:gravity="center"
+                android:drawableLeft="@drawable/ic_baseline_delete_forever_24"
+                android:paddingLeft="40dp"
+                android:paddingTop="40dp"
+                android:textColor="#fff"
+                android:layout_weight="8"/>
+
+            <TextView
+                android:id="@+id/deleteConfirmText"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:textColor="#fff"
+                android:background="#ff0000"
+                android:gravity="center"
+                android:textSize="20dp"
+                android:layout_weight="1">
+
+            </TextView>
+
+        </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout

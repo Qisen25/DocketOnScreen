@@ -6,15 +6,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
-import android.widget.Toolbar
+import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.daimajia.swipe.SwipeLayout
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
@@ -80,11 +78,12 @@ class AddItemFragment : Fragment() {
 
     /**
      * Shows a dialog to add item details
+     * NOTE: currPosition cannot count - 1 since list position cannot be -1 when starting
      */
     private fun showUpdateItemPopUp(title: String = "", name: String = "", price: Double = 0.0,
                                     category: String = "", description: String = "",
                                     itemEntryManipulation: (menu: Catalogue, item: Item, index: Int) -> Unit,
-                                    currPosition: Int = currMenu.getItems().count() - 1) {
+                                    currPosition: Int = currMenu.getItems().count()) {
 
         val addItemDialog = Dialog(requireContext())
         addItemDialog.setContentView(R.layout.additem_dialog)
@@ -96,9 +95,15 @@ class AddItemFragment : Fragment() {
         val categoryEditText = addItemDialog.findViewById<TextInputEditText>(R.id.categoryEditText)
         val titleView = addItemDialog.findViewById<TextView>(R.id.addItemTitle)
 
+        nameEditText.requestFocus()
+
+        // Check if price is zero and set empty string if zero to prevent presetting
+        // edit text with a number which could be annoying to backspace, this enhances usability
+        val priceView = if (price == 0.0) "" else price.toString()
+
         titleView.text = title
         nameEditText.setText(name)
-        priceEditText.setText(price.toString())
+        priceEditText.setText(priceView)
         categoryEditText.setText(category)
         descEditText.setText(description)
 
@@ -154,8 +159,13 @@ class AddItemFragment : Fragment() {
             private val nameTxtView = v.findViewById<TextView>(R.id.itemNameOnList)
             private val priceTxtView = v.findViewById<TextView>(R.id.priceBox)
             private val descTxtView = v.findViewById<TextView>(R.id.descriptBox)
-            private val deleteButt = v.findViewById<TextView>(R.id.Delete)
-            private val editButt = v.findViewById<TextView>(R.id.Edit)
+            private val deleteButt = v.findViewById<TextView>(R.id.deleteButton)
+            private val editButt = v.findViewById<TextView>(R.id.editButton)
+            private val deleteConfirmText = v.findViewById<TextView>(R.id.deleteConfirmText)
+
+            private val swipeLayout = v.findViewById<SwipeLayout>(R.id.itemListSwiper)
+
+            private var showDeleteConfirmation = false
 
             init {
                 v.setOnClickListener(this)
@@ -169,9 +179,17 @@ class AddItemFragment : Fragment() {
                 deleteButt.setOnClickListener {
                     Toast.makeText(it.context, "Clicked Delete", Toast.LENGTH_SHORT).show()
 
-                    val index = CatalogueRepository.removeItem(currMenu, item)
-
-                    itemAdapter.notifyItemRemoved(index)
+                    // First click must show the confirm text to user
+                    if (!showDeleteConfirmation) {
+                        // Move bin icon to left and show word confirm
+                        deleteConfirmText.text = "Confirm?"
+                        showDeleteConfirmation = true
+                    }
+                    else {
+                        // If user confirms then delete
+                        removeItem(item)
+                        showDeleteConfirmation = false
+                    }
                 }
 
                 editButt.setOnClickListener {
@@ -179,10 +197,44 @@ class AddItemFragment : Fragment() {
 
                     showUpdateItemPopUp("Edit Item", item.name, item.price, item.category, item.description, ::updateItem, position)
                 }
+
+                swipeLayout.addSwipeListener(object: SwipeLayout.SwipeListener {
+                    override fun onStartOpen(layout: SwipeLayout?) {
+
+                    }
+
+                    override fun onOpen(layout: SwipeLayout?) {
+
+                    }
+
+                    override fun onStartClose(layout: SwipeLayout?) {
+
+                    }
+
+                    override fun onClose(layout: SwipeLayout?) {
+                        // Revert delete button back to original state
+                        deleteConfirmText.text = ""
+                        showDeleteConfirmation = false
+                    }
+
+                    override fun onUpdate(layout: SwipeLayout?, leftOffset: Int, topOffset: Int) {
+
+                    }
+
+                    override fun onHandRelease(layout: SwipeLayout?, xvel: Float, yvel: Float) {
+
+                    }
+                })
             }
 
             override fun onClick(v: View?) {
 
+            }
+
+            private fun removeItem(item: Item) {
+                val index = CatalogueRepository.removeItem(currMenu, item)
+
+                itemAdapter.notifyItemRemoved(index)
             }
         }
 
@@ -194,6 +246,8 @@ class AddItemFragment : Fragment() {
 
         override fun onBindViewHolder(holder: AddItemFragment.ItemRecyclerViewAdapter.ItemHolder, position: Int) {
             val item = recycleList.get(position)
+
+            println(position)
 
             holder.bind(item, position)
         }
