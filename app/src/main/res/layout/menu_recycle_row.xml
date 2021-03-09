@@ -8,8 +8,8 @@
     android:foreground="?android:attr/selectableItemBackground"
     android:clickable="true"
     app:cardElevation="4dp"
-    app:strokeColor="#d1d1d1"
-    app:strokeWidth="3dp">
+    app:strokeColor="@color/whitesmoke2"
+    app:strokeWidth="2dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

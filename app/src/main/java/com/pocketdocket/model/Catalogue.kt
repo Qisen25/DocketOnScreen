@@ -24,6 +24,10 @@ data class Catalogue(val name: String?) : Parcelable {
         items.remove(item)
     }
 
+    fun removeItemAt(pos: Int) {
+        items.removeAt(pos)
+    }
+
     fun getItems(): MutableList<Item> {
         return this.items
     }

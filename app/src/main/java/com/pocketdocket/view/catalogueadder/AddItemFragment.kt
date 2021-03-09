@@ -155,7 +155,7 @@ class AddItemFragment : Fragment() {
 
         private val recycleList = inListOfMenus
 
-        inner class ItemHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener {
+        inner class ItemHolder(v: View) : RecyclerView.ViewHolder(v) {
             private val nameTxtView = v.findViewById<TextView>(R.id.itemNameOnList)
             private val priceTxtView = v.findViewById<TextView>(R.id.priceBox)
             private val descTxtView = v.findViewById<TextView>(R.id.descriptBox)
@@ -167,22 +167,20 @@ class AddItemFragment : Fragment() {
 
             private var showDeleteConfirmation = false
 
-            init {
-                v.setOnClickListener(this)
-            }
+            // Delete listener for reusability
+            // This used by the delete button and delete confirmation
+            private val deleteListener = object: View.OnClickListener{
+                private lateinit var item: Item
 
-            fun bind(item: Item, position: Int) {
-                nameTxtView.text = item.name
-                priceTxtView.text = item.getPriceWithSign()
-                descTxtView.text = item.description
-
-                deleteButt.setOnClickListener {
-                    Toast.makeText(it.context, "Clicked Delete", Toast.LENGTH_SHORT).show()
-
+                override fun onClick(v: View?) {
                     // First click must show the confirm text to user
                     if (!showDeleteConfirmation) {
                         // Move bin icon to left and show word confirm
                         deleteConfirmText.text = "Confirm?"
+                        // Allow user to also press the confirm text area for better usability
+                        deleteConfirmText.setOnClickListener {
+                            removeItem(item)
+                        }
                         showDeleteConfirmation = true
                     }
                     else {
@@ -192,12 +190,30 @@ class AddItemFragment : Fragment() {
                     }
                 }
 
+                // set item before using this listener
+                fun setItemForDelete(it: Item) {
+                    item = it
+                }
+            }
+
+
+            fun bind(item: Item, position: Int) {
+                nameTxtView.text = item.name
+                priceTxtView.text = item.getPriceWithSign()
+                descTxtView.text = item.description
+
+                deleteListener.setItemForDelete(item)
+                deleteButt.setOnClickListener(deleteListener)
+                deleteConfirmText.setOnClickListener(deleteListener)
+
+
                 editButt.setOnClickListener {
                     Toast.makeText(it.context, "Clicked Edit", Toast.LENGTH_SHORT).show()
 
                     showUpdateItemPopUp("Edit Item", item.name, item.price, item.category, item.description, ::updateItem, position)
                 }
 
+                // Swipe listener
                 swipeLayout.addSwipeListener(object: SwipeLayout.SwipeListener {
                     override fun onStartOpen(layout: SwipeLayout?) {
 
@@ -214,6 +230,7 @@ class AddItemFragment : Fragment() {
                     override fun onClose(layout: SwipeLayout?) {
                         // Revert delete button back to original state
                         deleteConfirmText.text = ""
+                        deleteConfirmText.setOnClickListener(deleteListener)
                         showDeleteConfirmation = false
                     }
 
@@ -225,10 +242,6 @@ class AddItemFragment : Fragment() {
 
                     }
                 })
-            }
-
-            override fun onClick(v: View?) {
-
             }
 
             private fun removeItem(item: Item) {
@@ -246,8 +259,6 @@ class AddItemFragment : Fragment() {
 
         override fun onBindViewHolder(holder: AddItemFragment.ItemRecyclerViewAdapter.ItemHolder, position: Int) {
             val item = recycleList.get(position)
-
-            println(position)
 
             holder.bind(item, position)
         }

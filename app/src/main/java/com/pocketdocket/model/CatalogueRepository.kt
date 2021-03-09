@@ -15,6 +15,7 @@ class CatalogueRepository {
     companion object {
         var menus: MutableList<Catalogue> = mutableListOf<Catalogue>()
         private lateinit var db: SQLiteDatabase
+        // Keep track of menu index
         private var menuCount = 0
 
         /**
@@ -87,8 +88,8 @@ class CatalogueRepository {
         }
 
         fun addItem(menu: Catalogue, item: Item) {
+
             item.menuId = menu.dbPrimaryId
-            menu.getItems().add(item)
 
             val cv = ContentValues()
             cv.put(SchemaInfo.Items.COLUMN_NAME, item.name)
@@ -96,7 +97,14 @@ class CatalogueRepository {
             cv.put(SchemaInfo.Items.COLUMN_CATEGORY, item.category)
             cv.put(SchemaInfo.Items.COLUMN_DESCRIPTION, item.description)
             cv.put(SchemaInfo.Items.COLUMN_MENU_ID, item.menuId)
-            db.insert(SchemaInfo.Items.TABLE_NAME, null, cv)
+            val rowId = db.insert(SchemaInfo.Items.TABLE_NAME, null, cv)
+
+            // Db insert returns the row Id which is also the primary key
+            // It also doesn't reset to 0 when leaving the app and coming back on to adding item
+            // Recent index is based off additions made previously (Persitent logging of ids I guess)
+            item.dbPrimaryId = rowId.toInt()
+
+            menu.getItems().add(item)
         }
 
         fun removeItem(menu: Catalogue, item: Item): Int {

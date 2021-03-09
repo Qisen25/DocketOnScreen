@@ -87,7 +87,7 @@ class AddCatalogueFragment : Fragment() {
 
             menuAdapter.notifyItemInserted(listOfMenus.count() - 1);
 
-            submitContainer.visibility = View.VISIBLE
+            submitContainer.visibility = View.INVISIBLE
             // hide keyboard
             imm.hideSoftInputFromWindow(textEditInp.windowToken, 0)
         }
@@ -127,6 +127,7 @@ class AddCatalogueFragment : Fragment() {
             false
         }
 
+        // Set focus listener to make sure Floating button is hidden from user when typing
         textEditInp.setOnFocusChangeListener { v, hasFocus ->
             if(hasFocus) {
                 floatAddButton.visibility = View.INVISIBLE
@@ -136,17 +137,18 @@ class AddCatalogueFragment : Fragment() {
             }
         }
 
+        // Hide keyboard when user clicks back button
         view.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 val heightDiff: Int = view.rootView.height - view.height
 
-                if (heightDiff > 400) { // Value should be less than keyboard's height
+                if (heightDiff > 400) { // Value should be at least keyboard's height
+                    // Show input box as key board rises
                     floatAddButton.visibility = View.INVISIBLE
-                    submitContainer.visibility=View.VISIBLE
+                    submitContainer.visibility = View.VISIBLE
                     textInpLay.requestFocus()
                 } else {
-                    floatAddButton.visibility = View.VISIBLE
-                    submitContainer.visibility=View.INVISIBLE
+                    submitContainer.visibility = View.INVISIBLE
                 }
             }
         })

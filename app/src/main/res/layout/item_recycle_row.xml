@@ -7,7 +7,8 @@
     android:id="@+id/itemListSwiper"
     app:leftEdgeSwipeOffset="0dp"
     app:rightEdgeSwipeOffset="0dp"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@drawable/listitem_shape">
 
     <LinearLayout
         android:id="@+id/swipeOptions"
@@ -64,15 +65,14 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
+
         <TextView
             android:id="@+id/itemNameOnList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginEnd="150dp"
             android:layout_marginRight="150dp"
             android:gravity="start"
             android:text="Name of Item"
@@ -84,28 +84,24 @@
             android:id="@+id/descriptBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="10dp"
-            android:layout_marginEnd="150dp"
-            android:layout_marginRight="150dp"
+            android:layout_marginRight="100dp"
             android:gravity="start"
             android:text="Desc"
-            android:textColor="@color/black"
+            android:textColor="@color/greymatte"
             android:textSize="15dp" />
 
         <TextView
             android:id="@+id/priceBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="200dp"
             android:layout_marginRight="200dp"
             android:gravity="start"
             android:text="$Price"
-            android:textColor="@color/black"
+            android:textColor="@color/dodgerblue"
             android:textSize="18dp"
             android:textStyle="bold" />
     </LinearLayout>
