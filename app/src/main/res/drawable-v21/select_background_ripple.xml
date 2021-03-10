@@ -2,12 +2,14 @@
 <ripple
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:color="#cacccc"
+    android:color="@color/whitesmoke2"
     >
     <item android:id="@android:id/mask">
         <shape android:shape="rectangle">
-            <solid android:color="#d1c4e9"></solid>
+            <solid android:color="@color/whitesmoke2"></solid>
+            <corners android:radius="15dp"></corners>
         </shape>
     </item>
 
+    <item android:drawable="@drawable/transparent_border"/>
 </ripple>

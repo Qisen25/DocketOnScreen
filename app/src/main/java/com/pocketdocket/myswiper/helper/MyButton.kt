@@ -51,14 +51,25 @@ class MyButton(private val context: Context?, private val text: String,
         var y = 0f
 
         if(imageResId == 0) {
-            x = cWidth/2f - r.width()/2f - r.left.toFloat()
-            y = cHeight/2f - r.height()/2f - r.bottom.toFloat()
+            // Align center text, since alig.LEFT we only need a small margin left to make it center
+            x = (cWidth - r.width()) / 2 - r.left.toFloat()
+            // Get middle point height base on height then subtract the bottom point of text to
+            // get accurate center alignment
+            y = (cHeight + r.height()) / 2 - r.bottom.toFloat()
             c.drawText(text, rectf.left + x, rectf.top + y, paint)
+//            println("cW $cWidth cH $cHeight rW ${r.width()} rH ${r.height()}")
+//            println("rLeft ${r.left.toFloat()} rBot ${r.bottom.toFloat()}")
+//            println("X $x Y $y")
         }
         else {
             val d = ContextCompat.getDrawable(context!!, imageResId)
             val bitmap = drawableToBitmap(d)
-            c.drawBitmap(bitmap, (rectf.left + rectf.right) / 2, (rectf.top + rectf.bottom) / 2, paint)
+            // Get total of rectF width and subtract by bitmap width to ensure img is centered
+            // and divide by 2 to get actual position
+            val centerX = ((rectf.left + rectf.right) - bitmap.width) / 2
+            // similar to above
+            val centerY = ((rectf.top + rectf.bottom) - bitmap.height) / 2
+            c.drawBitmap(bitmap, centerX, centerY, paint)
         }
 
         clickRegion = rectf

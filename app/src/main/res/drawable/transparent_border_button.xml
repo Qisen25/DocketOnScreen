@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This xml avoid button background templates from appearing bigger than default -->
+<layer-list
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:top="6dp"
+        android:bottom="6dp"
+        android:drawable="@drawable/select_background_ripple">
+    </item>
+
+</layer-list>

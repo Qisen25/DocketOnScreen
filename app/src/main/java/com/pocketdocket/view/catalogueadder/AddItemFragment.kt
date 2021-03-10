@@ -69,7 +69,6 @@ class AddItemFragment : Fragment() {
             println("Current cata " + currMenu.dbPrimaryId)
 
             fabAdditem.setOnClickListener {
-//                println("Count " + CatalogueRepository.loadItems(0).count())
                 // import this class addNewItem method to save an item
                 showUpdateItemPopUp(title = "Add Menu", itemEntryManipulation = ::addNewItem)
             }
@@ -87,6 +86,7 @@ class AddItemFragment : Fragment() {
 
         val addItemDialog = Dialog(requireContext())
         addItemDialog.setContentView(R.layout.additem_dialog)
+        addItemDialog.setTitle(title)
         val saveItemButt = addItemDialog.findViewById<Button>(R.id.saveItemButt)
         val cancelButt = addItemDialog.findViewById<Button>(R.id.cancelButt)
         val nameEditText = addItemDialog.findViewById<TextInputEditText>(R.id.nameEditText)

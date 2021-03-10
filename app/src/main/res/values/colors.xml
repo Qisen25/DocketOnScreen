@@ -12,4 +12,5 @@
     <color name="woodorange">#edb445</color>
     <color name="guyabano">#f8f8f8</color>
     <color name="whitesmoke2">#F0F0F0</color>
+    <color name="transparent">#00FFFFFF</color>
 </resources>

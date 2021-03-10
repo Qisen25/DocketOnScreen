@@ -8,6 +8,7 @@ import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.annotation.RequiresApi
+import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -63,17 +64,7 @@ class AddCatalogueFragment : Fragment() {
         // Add My own Swiper
         val swipe = object: MySwipeHelper(context, recyView, 200) {
             override fun instantiateMyButton(viewHolder: RecyclerView.ViewHolder, buffer: MutableList<MyButton>) {
-                buffer.add(MyButton(context,
-                "Delete",
-                30,
-                0,
-                Color.parseColor("#FF3C30"),
-                object: MyButtonClickListener{
-                    override fun onClick(pos: Int) {
-                        Toast.makeText(context, "Delete pressed", Toast.LENGTH_SHORT).show()
-                    }
-
-                }))
+                addSwipeButtons(buffer)
             }
         }
 
@@ -155,6 +146,51 @@ class AddCatalogueFragment : Fragment() {
     }
 
     /**
+     * Set up buttons when on swipe
+     */
+    private fun addSwipeButtons(list: MutableList<MyButton>) {
+        val deleteSwipeButton = MyButton(context,
+                "Delete",
+                30,
+                R.drawable.ic_baseline_delete_forever_24,
+                Color.parseColor("#FF3C30"),
+                object: MyButtonClickListener{
+                    override fun onClick(pos: Int) {
+                        Toast.makeText(context, "Delete pressed", Toast.LENGTH_SHORT).show()
+                    }
+                })
+
+        val manageItemSwipeButton = MyButton(context,
+                "Manage Items",
+                30,
+                0,
+                Color.parseColor("#ffa500"),
+                object: MyButtonClickListener{
+                    override fun onClick(pos: Int) {
+                        val itemFrag = AddItemFragment.newInstance()
+                        val bundle = Bundle().apply { putParcelable("Menu", listOfMenus[pos]) }
+                        itemFrag.arguments = bundle
+
+                        // use previous fragment manager
+                        parentFragmentManager.beginTransaction().replace(R.id.addMenuContainer, itemFrag).addToBackStack(null).commit()
+                    }
+                })
+
+        val editSwipeButton = MyButton(context,
+                "Edit",
+                30,
+                R.drawable.ic_baseline_edit_24,
+                Color.parseColor("#1E90FF"),
+                object: MyButtonClickListener{
+                    override fun onClick(pos: Int) {
+                        Toast.makeText(context, "Edit not implemented yet", Toast.LENGTH_SHORT).show()
+                    }
+                })
+
+        list.addAll(listOf(editSwipeButton, manageItemSwipeButton, deleteSwipeButton))
+    }
+
+    /**
      * Recycler view class for handling list view of menu names
      * Future could add image and other details relating to organisation
      */
@@ -174,12 +210,12 @@ class AddCatalogueFragment : Fragment() {
             }
 
             override fun onClick(v: View?) {
-                val itemFrag = AddItemFragment.newInstance()
-                val bundle = Bundle().apply { putParcelable("Menu", recycleList[adapterPosition]) }
-                itemFrag.arguments = bundle
-
-                // use previous fragment manager
-                parentFragmentManager.beginTransaction().replace(R.id.addMenuContainer, itemFrag).addToBackStack(null).commit()
+//                val itemFrag = AddItemFragment.newInstance()
+//                val bundle = Bundle().apply { putParcelable("Menu", recycleList[adapterPosition]) }
+//                itemFrag.arguments = bundle
+//
+//                // use previous fragment manager
+//                parentFragmentManager.beginTransaction().replace(R.id.addMenuContainer, itemFrag).addToBackStack(null).commit()
             }
         }
 
