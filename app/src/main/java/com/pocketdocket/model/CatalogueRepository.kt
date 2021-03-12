@@ -16,7 +16,6 @@ class CatalogueRepository {
         var menus: MutableList<Catalogue> = mutableListOf<Catalogue>()
         private lateinit var db: SQLiteDatabase
         // Keep track of menu index
-        private var menuCount = 0
 
         /**
          * start up database
@@ -43,8 +42,6 @@ class CatalogueRepository {
                     menus.add(menu)
                     menuCurs.moveToNext()
                 }
-
-                menuCount = menus.count()
             }
             finally {
                 menuCurs.close()
@@ -75,16 +72,13 @@ class CatalogueRepository {
          * Add menu to list and database
          */
         fun addMenu(cat: Catalogue) {
-            // Set item index, sqlite auto increments and follows this pattern
-            // eg. start at index 1 if list count is 0 to follow sql convention where primary key integers start 1 by default
-            menuCount++
-            cat.dbPrimaryId = menuCount
-            menus.add(cat)
-
             // Primary key is auto incremented in this step but it also matches above step
             val cv = ContentValues()
             cv.put(SchemaInfo.Menus.COLUMN_NAME, cat.name)
-            db.insert(SchemaInfo.Menus.TABLE_NAME, null, cv)
+            val rowId = db.insert(SchemaInfo.Menus.TABLE_NAME, null, cv)
+
+            cat.dbPrimaryId = rowId.toInt()
+            menus.add(cat)
         }
 
         fun addItem(menu: Catalogue, item: Item) {
@@ -117,6 +111,17 @@ class CatalogueRepository {
             menu.removeItem(item)
 
             return index
+        }
+
+        fun removeMenu(menu: Catalogue) {
+            val id = menu.dbPrimaryId
+            val whereArgs = arrayOf(id.toString())
+            menus.remove(menu)
+
+            // Delete Items associated with current menu
+            db.delete(SchemaInfo.Items.TABLE_NAME, "menuId = ?", whereArgs)
+            // Finally delete menu
+            db.delete(SchemaInfo.Menus.TABLE_NAME, "_id = ?", whereArgs)
         }
 
         fun updateItem(item: Item) {

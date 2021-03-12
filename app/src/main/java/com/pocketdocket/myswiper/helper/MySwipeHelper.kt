@@ -163,6 +163,9 @@ abstract class MySwipeHelper(context: Context?, private val recycView: RecyclerV
                 var buffer: MutableList<MyButton> = ArrayList()
                 if(!buttonBuffer.containsKey(pos)) {
                     instantiateMyButton(viewHolder, buffer)
+                    // reverse order since drawing of swipe buttons will be right to left
+                    // thus we try to show order buttons ordered in the list left to right
+                    buffer.reverse()
                     buttonBuffer[pos] = buffer
                 }
                 else {

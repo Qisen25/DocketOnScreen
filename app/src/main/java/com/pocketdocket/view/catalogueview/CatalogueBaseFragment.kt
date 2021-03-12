@@ -1,4 +1,4 @@
-package com.pocketdocket.view.catalogueadder
+package com.pocketdocket.view.catalogueview
 
 import android.os.Build
 import android.os.Bundle
@@ -6,20 +6,21 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toolbar
+import androidx.appcompat.widget.Toolbar
 import androidx.annotation.RequiresApi
 import com.pocketdocket.R
+import com.pocketdocket.view.main.MainActivity
 
 
 /**
  * Base fragment for enabling nesting of adding/editing menu fragment and add item/dish fragment
  */
-class AddCatalogueBaseFragment : Fragment() {
+class CatalogueBaseFragment : Fragment() {
 
     private val listOfMenus: MutableList<String> = mutableListOf()
 
     companion object {
-        fun newInstance(): AddCatalogueBaseFragment = AddCatalogueBaseFragment()
+        fun newInstance(): CatalogueBaseFragment = CatalogueBaseFragment()
     }
 
     override fun onCreateView(
@@ -34,12 +35,14 @@ class AddCatalogueBaseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val mainAct = (activity as MainActivity)
+
         // Get action bar with back button
         val tb = view.findViewById<Toolbar>(R.id.toolbar)
-        activity?.setActionBar(tb)
-        activity?.actionBar?.setDisplayHomeAsUpEnabled(true)
-        activity?.actionBar?.setDisplayShowHomeEnabled(true)
-//        activity?.actionBar?.setDisplayShowTitleEnabled(false)
+        mainAct.setSupportActionBar(tb)
+        mainAct.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        mainAct.supportActionBar?.setDisplayShowHomeEnabled(true)
+        mainAct.supportActionBar?.setDisplayShowTitleEnabled(true)
         tb.title = ""
 
         tb.setNavigationOnClickListener {
@@ -54,7 +57,7 @@ class AddCatalogueBaseFragment : Fragment() {
      * Set up a nested fragment that allows user to add a menu
      */
     private fun setupMenuAdder() {
-        val adderFrag = AddCatalogueFragment.newInstance()
+        val adderFrag = CatalogueManagerFragment.newInstance()
         parentFragmentManager.beginTransaction().replace(R.id.addMenuContainer, adderFrag).commit()
     }
 

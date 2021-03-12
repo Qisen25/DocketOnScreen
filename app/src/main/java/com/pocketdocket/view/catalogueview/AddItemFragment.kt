@@ -1,11 +1,9 @@
-package com.pocketdocket.view.catalogueadder
+package com.pocketdocket.view.catalogueview
 
 import android.app.Dialog
 import android.os.Build
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
@@ -20,6 +18,7 @@ import com.pocketdocket.R
 import com.pocketdocket.model.Catalogue
 import com.pocketdocket.model.CatalogueRepository
 import com.pocketdocket.model.Item
+import androidx.appcompat.widget.Toolbar
 
 /**
  * Fragment view for adding dishes to a menu
@@ -84,9 +83,11 @@ class AddItemFragment : Fragment() {
                                     itemEntryManipulation: (menu: Catalogue, item: Item, index: Int) -> Unit,
                                     currPosition: Int = currMenu.getItems().count()) {
 
+        // Create dialog
         val addItemDialog = Dialog(requireContext())
+        addItemDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         addItemDialog.setContentView(R.layout.additem_dialog)
-        addItemDialog.setTitle(title)
+
         val saveItemButt = addItemDialog.findViewById<Button>(R.id.saveItemButt)
         val cancelButt = addItemDialog.findViewById<Button>(R.id.cancelButt)
         val nameEditText = addItemDialog.findViewById<TextInputEditText>(R.id.nameEditText)

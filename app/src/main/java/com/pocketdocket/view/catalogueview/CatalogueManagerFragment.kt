@@ -1,6 +1,8 @@
-package com.pocketdocket.view.catalogueadder
+package com.pocketdocket.view.catalogueview
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -8,7 +10,6 @@ import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.annotation.RequiresApi
-import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,16 +22,21 @@ import com.pocketdocket.model.CatalogueRepository
 import com.pocketdocket.myswiper.helper.MyButton
 import com.pocketdocket.myswiper.helper.MySwipeHelper
 import com.pocketdocket.myswiper.listeners.MyButtonClickListener
+import com.pocketdocket.view.order.OrderingFragment
+import androidx.appcompat.widget.Toolbar
+
+//import com.pocketdocket.view.order.OrderingFragment
 
 /**
  * Fragment class that handles the adding and editing menus
  */
-class AddCatalogueFragment : Fragment() {
+class CatalogueManagerFragment : Fragment() {
 
-   private var listOfMenus: MutableList<Catalogue> = CatalogueRepository.menus
+    private var listOfMenus: MutableList<Catalogue> = CatalogueRepository.menus
+    private lateinit var menuAdapter: MenuRecyclerViewAdapter
 
     companion object {
-        fun newInstance(): AddCatalogueFragment = AddCatalogueFragment()
+        fun newInstance(): CatalogueManagerFragment = CatalogueManagerFragment()
     }
 
     override fun onCreateView(
@@ -51,12 +57,13 @@ class AddCatalogueFragment : Fragment() {
         val textInpLay = view.findViewById<TextInputLayout>(R.id.textInputLay)
         val textEditInp = view.findViewById<TextInputEditText>(R.id.textintedit)
         val tb = view.rootView.findViewById<Toolbar>(R.id.toolbar)
+        tb.visibility = View.VISIBLE
 
         val floatAddButton = view.findViewById<FloatingActionButton>(R.id.fabAddMenu)
 
         // Setup recycle view for list menus
         val recyView = view.findViewById<RecyclerView>(R.id.menuRecycleList)
-        val menuAdapter = MenuRecyclerViewAdapter(this.listOfMenus)
+        menuAdapter = MenuRecyclerViewAdapter(this.listOfMenus)
         val layoutMan = LinearLayoutManager(context)
         recyView.layoutManager = layoutMan
         recyView.adapter = menuAdapter
@@ -156,14 +163,33 @@ class AddCatalogueFragment : Fragment() {
                 Color.parseColor("#FF3C30"),
                 object: MyButtonClickListener{
                     override fun onClick(pos: Int) {
-                        Toast.makeText(context, "Delete pressed", Toast.LENGTH_SHORT).show()
+                        val alertDialog = AlertDialog.Builder(context)
+                        alertDialog.setTitle("Confirm Delete")
+                        alertDialog.setMessage("Are sure you want delete?")
+                        alertDialog.setCancelable(true)
+
+                        alertDialog.setPositiveButton("Yes", object: DialogInterface.OnClickListener{
+                            override fun onClick(dialog: DialogInterface?, which: Int) {
+                                CatalogueRepository.removeMenu(listOfMenus[pos])
+                                menuAdapter.notifyItemRemoved(pos)
+                            }
+                        })
+
+                        alertDialog.setNegativeButton("No", object: DialogInterface.OnClickListener{
+                            override fun onClick(dialog: DialogInterface?, which: Int) {
+                                dialog!!.cancel()
+                            }
+                        })
+
+                        val alert = alertDialog.create()
+                        alert.show()
                     }
                 })
 
         val manageItemSwipeButton = MyButton(context,
                 "Manage Items",
                 30,
-                0,
+                R.drawable.ic_baseline_playlist_add_30,
                 Color.parseColor("#ffa500"),
                 object: MyButtonClickListener{
                     override fun onClick(pos: Int) {
@@ -210,12 +236,12 @@ class AddCatalogueFragment : Fragment() {
             }
 
             override fun onClick(v: View?) {
-//                val itemFrag = AddItemFragment.newInstance()
-//                val bundle = Bundle().apply { putParcelable("Menu", recycleList[adapterPosition]) }
-//                itemFrag.arguments = bundle
-//
-//                // use previous fragment manager
-//                parentFragmentManager.beginTransaction().replace(R.id.addMenuContainer, itemFrag).addToBackStack(null).commit()
+                val ordFrag = OrderingFragment.newInstance()
+                val bundle = Bundle().apply { putParcelable("Menu", recycleList[adapterPosition]) }
+                ordFrag.arguments = bundle
+
+                // use previous fragment manager
+                parentFragmentManager.beginTransaction().replace(R.id.addMenuContainer, ordFrag).addToBackStack(null).commit()
             }
         }
 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- This xml avoid button background templates from appearing bigger than default -->
+<!-- This xml avoid button background templates from appearing bigger than default
+      Custom button design to prevent buttons from competing for user focus -->
 <layer-list
     xmlns:android="http://schemas.android.com/apk/res/android">
 
