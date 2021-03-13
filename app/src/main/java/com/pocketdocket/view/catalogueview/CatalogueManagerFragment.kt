@@ -24,6 +24,8 @@ import com.pocketdocket.myswiper.helper.MySwipeHelper
 import com.pocketdocket.myswiper.listeners.MyButtonClickListener
 import com.pocketdocket.view.order.OrderingFragment
 import androidx.appcompat.widget.Toolbar
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.updateLayoutParams
 
 //import com.pocketdocket.view.order.OrderingFragment
 
@@ -50,6 +52,12 @@ class CatalogueManagerFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Make sure frame under support tool bar
+        view.rootView.findViewById<FrameLayout>(R.id.manageMenuContainer).updateLayoutParams<ConstraintLayout.LayoutParams> {
+            topToTop = ConstraintLayout.LayoutParams.UNSET
+            topToBottom = R.id.toolbar
+        }
 
 //        val listv = view.findViewById<ListView>(R.id.recipe_list_view)
         val submitContainer = view.findViewById<LinearLayout>(R.id.addMenuInputContainer)
@@ -198,7 +206,7 @@ class CatalogueManagerFragment : Fragment() {
                         itemFrag.arguments = bundle
 
                         // use previous fragment manager
-                        parentFragmentManager.beginTransaction().replace(R.id.addMenuContainer, itemFrag).addToBackStack(null).commit()
+                        parentFragmentManager.beginTransaction().replace(R.id.manageMenuContainer, itemFrag).addToBackStack(null).commit()
                     }
                 })
 
@@ -241,7 +249,7 @@ class CatalogueManagerFragment : Fragment() {
                 ordFrag.arguments = bundle
 
                 // use previous fragment manager
-                parentFragmentManager.beginTransaction().replace(R.id.addMenuContainer, ordFrag).addToBackStack(null).commit()
+                parentFragmentManager.beginTransaction().replace(R.id.manageMenuContainer, ordFrag).addToBackStack(null).commit()
             }
         }
 

@@ -6,8 +6,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.annotation.RequiresApi
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.updateLayoutParams
 import com.pocketdocket.R
 import com.pocketdocket.view.main.MainActivity
 
@@ -35,6 +38,11 @@ class CatalogueBaseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Make sure frame under support tool bar
+//        view.findViewById<FrameLayout>(R.id.manageMenuContainer).updateLayoutParams<ConstraintLayout.LayoutParams> {
+//            topToBottom = R.id.toolbar
+//        }
+
         val mainAct = (activity as MainActivity)
 
         // Get action bar with back button
@@ -58,7 +66,7 @@ class CatalogueBaseFragment : Fragment() {
      */
     private fun setupMenuAdder() {
         val adderFrag = CatalogueManagerFragment.newInstance()
-        parentFragmentManager.beginTransaction().replace(R.id.addMenuContainer, adderFrag).commit()
+        parentFragmentManager.beginTransaction().replace(R.id.manageMenuContainer, adderFrag).commit()
     }
 
 }

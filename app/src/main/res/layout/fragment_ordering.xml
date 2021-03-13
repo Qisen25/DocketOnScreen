@@ -10,16 +10,18 @@
 
     <!--  Category tab bar to enable user to select types of items  -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/categoryBar"
+        android:id="@+id/categoryRecyclerBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:orientation="horizontal"
+        android:elevation="2dp"
+        android:outlineProvider="bounds"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" >
     </androidx.recyclerview.widget.RecyclerView>
 
     <!--  Available items in list  -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/orderItemList"
+        android:id="@+id/orderItemRecyclerList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="20dp">
