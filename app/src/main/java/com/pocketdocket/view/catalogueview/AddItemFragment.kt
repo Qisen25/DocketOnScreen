@@ -253,7 +253,7 @@ class AddItemFragment : Fragment() {
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddItemFragment.ItemRecyclerViewAdapter.ItemHolder {
-            val inflateRowView = LayoutInflater.from(context).inflate(R.layout.item_recycle_row, parent, false)
+            val inflateRowView = LayoutInflater.from(context).inflate(R.layout.swipe_item_recycle_row, parent, false)
 
             return ItemHolder(inflateRowView)
         }

@@ -56,6 +56,7 @@ class CatalogueManagerFragment : Fragment() {
         // Make sure frame under support tool bar
         view.rootView.findViewById<FrameLayout>(R.id.manageMenuContainer).updateLayoutParams<ConstraintLayout.LayoutParams> {
             topToTop = ConstraintLayout.LayoutParams.UNSET
+            topToBottom = ConstraintLayout.LayoutParams.UNSET
             topToBottom = R.id.toolbar
         }
 

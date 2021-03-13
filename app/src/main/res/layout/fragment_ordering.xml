@@ -24,7 +24,7 @@
         android:id="@+id/orderItemRecyclerList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="40dp">
     </androidx.recyclerview.widget.RecyclerView>
 
     <com.google.android.material.bottomappbar.BottomAppBar
@@ -36,7 +36,8 @@
         app:navigationIcon="@drawable/ic_baseline_menu_24"
         app:menu="@menu/menu_main"
         app:fabAlignmentMode="center"
-        app:fabCradleMargin="0dp">
+        app:fabCradleMargin="0dp"
+        app:hideOnScroll="true" >
     </com.google.android.material.bottomappbar.BottomAppBar>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -46,7 +47,8 @@
         android:backgroundTint="@color/dodgerblue"
         android:src="@drawable/ic_baseline_shopping_cart_24"
         app:tint="@color/white"
-        app:layout_anchor="@+id/bottomBar" >
+        app:layout_anchor="@+id/bottomBar"
+        app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior">
     </com.google.android.material.floatingactionbutton.FloatingActionButton>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

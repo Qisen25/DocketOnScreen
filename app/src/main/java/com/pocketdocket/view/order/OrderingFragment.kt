@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.pocketdocket.R
+import com.pocketdocket.model.Catalogue
+import com.pocketdocket.model.Item
 import com.pocketdocket.view.main.MainActivity
 
 /**
@@ -25,7 +27,9 @@ import com.pocketdocket.view.main.MainActivity
 class OrderingFragment : Fragment() {
 
     private lateinit var categoryAdapter: CategoryRecyclerViewAdapter
+    private lateinit var orderAdapter: OrderItemViewAdapter
     private val categorySet = linkedSetOf<String>("All", "Test1", "Test2", "Test3", "Test4", "Test5")
+    private lateinit var currMenu: Catalogue
 
     companion object {
         fun newInstance(): OrderingFragment = OrderingFragment()
@@ -92,14 +96,29 @@ class OrderingFragment : Fragment() {
 
         val categoryRecycler = view.findViewById<RecyclerView>(R.id.categoryRecyclerBar)
         categoryAdapter = CategoryRecyclerViewAdapter()
-        val layoutMan = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        categoryRecycler.layoutManager = layoutMan
+        val categoryLayoutMan = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        categoryRecycler.layoutManager = categoryLayoutMan
         categoryRecycler.adapter = categoryAdapter
 
         // Add dividers to list view
         val itemDec = DividerItemDecoration(context, DividerItemDecoration.HORIZONTAL)
         itemDec.setDrawable(context?.getDrawable(R.drawable.horizontal_divider)!!)
         categoryRecycler.addItemDecoration(itemDec)
+
+        if(this.arguments != null) {
+            currMenu = arguments?.getParcelable<Catalogue>("Menu") as Catalogue
+
+            val orderRecyclerView = view.findViewById<RecyclerView>(R.id.orderItemRecyclerList)
+            orderAdapter = OrderItemViewAdapter()
+            val orderLayoutMan = LinearLayoutManager(context)
+            orderRecyclerView.adapter = orderAdapter
+            orderRecyclerView.layoutManager = orderLayoutMan
+
+            // Add dividers to list view
+            val itemDec = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
+            itemDec.setDrawable(context?.getDrawable(R.drawable.divider)!!)
+            orderRecyclerView.addItemDecoration(itemDec)
+        }
 
     }
 
@@ -131,6 +150,36 @@ class OrderingFragment : Fragment() {
 
         override fun getItemCount(): Int {
             return categorySet.count()
+        }
+    }
+
+    inner class OrderItemViewAdapter : RecyclerView.Adapter<OrderItemViewAdapter.ItemHolder>() {
+
+        inner class ItemHolder(v: View) : RecyclerView.ViewHolder(v) {
+
+            private val nameTxtView = v.findViewById<TextView>(R.id.itemNameOnList)
+            private val priceTxtView = v.findViewById<TextView>(R.id.priceBox)
+            private val descTxtView = v.findViewById<TextView>(R.id.descriptBox)
+
+            fun bind(item: Item) {
+                nameTxtView.text = item.name
+                priceTxtView.text = item.getPriceWithSign()
+                descTxtView.text = item.description
+            }
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemHolder {
+            val inflatedRowView = LayoutInflater.from(context).inflate(R.layout.item_recycler_row, parent, false)
+
+            return ItemHolder(inflatedRowView)
+        }
+
+        override fun onBindViewHolder(holder: ItemHolder, position: Int) {
+            holder.bind(currMenu.getItems()[position])
+        }
+
+        override fun getItemCount(): Int {
+            return currMenu.getItems().count()
         }
     }
 }
