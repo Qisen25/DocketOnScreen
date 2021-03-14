@@ -6,25 +6,46 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.order.OrderingFragment">
+    tools:context=".view.order.OrderingFragment" >
+
+    <FrameLayout
+        android:id="@+id/orderBaseChildFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </FrameLayout>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/categoryTabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="2dp"
+        style="@style/AppTabLayout"
+        app:tabMode="scrollable" >
+
+    </com.google.android.material.tabs.TabLayout>
 
     <!--  Category tab bar to enable user to select types of items  -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/categoryRecyclerBar"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:orientation="horizontal"
-        android:elevation="2dp"
-        android:outlineProvider="bounds"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" >
-    </androidx.recyclerview.widget.RecyclerView>
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/categoryRecyclerBar"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="40dp"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:elevation="2dp"-->
+<!--        android:outlineProvider="bounds"-->
+<!--        android:visibility="invisible"-->
+<!--        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" >-->
+<!--    </androidx.recyclerview.widget.RecyclerView>-->
 
     <!--  Available items in list  -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/orderItemRecyclerList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="40dp">
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp">
     </androidx.recyclerview.widget.RecyclerView>
 
     <com.google.android.material.bottomappbar.BottomAppBar
@@ -40,15 +61,18 @@
         app:hideOnScroll="true" >
     </com.google.android.material.bottomappbar.BottomAppBar>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+<!--  Custom fab that also allows count badge to be shown  -->
+    <com.andremion.counterfab.CounterFab
         android:id="@+id/cartFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/dodgerblue"
         android:src="@drawable/ic_baseline_shopping_cart_24"
+        app:badgeBackgroundColor="@color/woodorange"
+        app:badgeTextColor="@color/white"
         app:tint="@color/white"
         app:layout_anchor="@+id/bottomBar"
         app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior">
-    </com.google.android.material.floatingactionbutton.FloatingActionButton>
+    </com.andremion.counterfab.CounterFab>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

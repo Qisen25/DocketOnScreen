@@ -11,7 +11,11 @@
     <color name="greymatte">#2f333f</color>
     <color name="woodorange">#edb445</color>
     <color name="guyabano">#f8f8f8</color>
-    <color name="whitesmoke2">#F0F0F0</color>
+    <color name="pre_whitesmoke">#F0F0F0</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="la_maison_bleue">#60AFFE</color>
+    <color name="light_grey">#D3D3D3</color>
+    <color name="gainsboro">#DCDCDC</color>
+    <color name="whitesmoke">#F5F5F5</color>
+    <color name="lime_green">#32CD32</color>
 </resources>

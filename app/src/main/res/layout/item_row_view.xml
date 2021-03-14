@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- item row view design, should be included by another layout as component -->
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/list_item_shape">
+    android:background="@drawable/list_item_shape"
+    android:elevation="1dp">
 
     <TextView
         android:id="@+id/itemNameOnList"
@@ -17,19 +18,21 @@
         android:text="Name of Item"
         android:textColor="@color/black"
         android:textSize="26dp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_alignParentTop="true" />
 
     <TextView
         android:id="@+id/descriptBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="12dp"
         android:layout_marginRight="100dp"
         android:gravity="start"
         android:text="Desc"
         android:textColor="@color/greymatte"
-        android:textSize="15dp" />
+        android:textSize="15dp"
+        android:layout_below="@id/itemNameOnList"/>
 
     <TextView
         android:id="@+id/priceBox"
@@ -42,5 +45,20 @@
         android:text="$Price"
         android:textColor="@color/dodgerblue"
         android:textSize="18dp"
-        android:textStyle="bold" />
-</LinearLayout>
+        android:textStyle="bold"
+        android:layout_below="@id/descriptBox"/>
+
+    <ImageView
+        android:id="@+id/addToCartButton"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="center"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/ic_baseline_add_circle_24"
+        android:visibility="visible"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true">
+    </ImageView>
+
+</RelativeLayout>
