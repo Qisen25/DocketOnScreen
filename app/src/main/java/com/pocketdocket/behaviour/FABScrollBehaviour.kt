@@ -13,6 +13,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class FABScrollBehaviour(private val context: Context, private val attrs: AttributeSet) : FloatingActionButton.Behavior(context, attrs) {
 
+    // Prevent swiping of non scrollable situation from hiding/showing button independently from
+    // anchored to something if true
+    private var isAnchored = false
+
     companion object {
         val TAG: String = "FABScrollBehaviour"
     }
@@ -55,11 +59,11 @@ class FABScrollBehaviour(private val context: Context, private val attrs: Attrib
             } else if (dyConsumed < 0 && child.visibility != View.VISIBLE) {
                 // User scrolled up and the FAB is currently not visible -> show the FAB
                 child.show()
-            } else if (dyUnconsumed < 0 && child.visibility != View.VISIBLE) {
+            } else if (dyUnconsumed < 0 && child.visibility != View.VISIBLE && !isAnchored) {
                 // Force FAB to show up if list view can't be scrolled and FAB is invisible
                 child.show()
                 println("2nd Last else")
-            } else if (dyUnconsumed > 0 && child.visibility == View.VISIBLE) {
+            } else if (dyUnconsumed > 0 && child.visibility == View.VISIBLE && !isAnchored) {
                 // Force FAB to hide if list view can't be scrolled and FAB is visible
                 child.hide(hideListener)
                 println("Last else")
@@ -67,6 +71,10 @@ class FABScrollBehaviour(private val context: Context, private val attrs: Attrib
         }
 
         println("Child visible?: " + child.visibility + ", dyCons: " + dyConsumed + " dyUncons " + dyUnconsumed)
+    }
+
+    fun setIsAnchored(bool: Boolean) {
+        isAnchored = bool
     }
 
 }

@@ -18,4 +18,11 @@
         app:showAsAction="ifRoom">
     </item>
 
+    <item
+        android:id="@+id/hideBar"
+        android:title="hide"
+        android:icon="@drawable/ic_baseline_hide_arrow_down_24"
+        app:showAsAction="ifRoom">
+    </item>
+
 </menu>

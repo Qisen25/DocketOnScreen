@@ -6,7 +6,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.order.OrderingFragment" >
+    tools:context=".view.order.OrderingFragment"
+    android:id="@+id/orderingConstLayout">
 
     <FrameLayout
         android:id="@+id/orderBaseChildFragment"
@@ -36,12 +37,21 @@
 <!--        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" >-->
 <!--    </androidx.recyclerview.widget.RecyclerView>-->
 
+    <ImageView
+        android:id="@+id/bringBackAppbarButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:background="@drawable/ic_baseline_show_arrow_up_24">
+    </ImageView>
+
     <!--  Available items in list  -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/orderItemRecyclerList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="50dp"
+        android:layout_marginBottom="40dp"
         android:layout_marginRight="5dp"
         android:layout_marginEnd="5dp"
         android:layout_marginLeft="5dp"
@@ -61,7 +71,7 @@
         app:hideOnScroll="true" >
     </com.google.android.material.bottomappbar.BottomAppBar>
 
-<!--  Custom fab that also allows count badge to be shown  -->
+    <!--  Custom fab that also allows count badge to be shown  -->
     <com.andremion.counterfab.CounterFab
         android:id="@+id/cartFab"
         android:layout_width="wrap_content"
@@ -72,7 +82,7 @@
         app:badgeTextColor="@color/white"
         app:tint="@color/white"
         app:layout_anchor="@+id/bottomBar"
-        app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior">
+        app:layout_behavior="com.pocketdocket.behaviour.FABScrollBehaviour">
     </com.andremion.counterfab.CounterFab>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

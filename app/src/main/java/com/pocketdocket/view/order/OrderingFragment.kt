@@ -7,6 +7,7 @@ import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -16,6 +17,7 @@ import com.andremion.counterfab.CounterFab
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.tabs.TabLayout
 import com.pocketdocket.R
+import com.pocketdocket.behaviour.FABScrollBehaviour
 import com.pocketdocket.model.Cart
 import com.pocketdocket.model.Catalogue
 import com.pocketdocket.model.Item
@@ -27,12 +29,15 @@ import com.pocketdocket.view.main.MainActivity
  */
 class OrderingFragment : Fragment() {
 
+    private val defaultTab = "All"
     private lateinit var categoryAdapter: CategoryRecyclerViewAdapter
     private lateinit var orderAdapter: OrderItemViewAdapter
-    private val categorySet = linkedSetOf<String>("All")
+    private val categorySet = linkedSetOf<String>(defaultTab)
     private lateinit var currMenu: Catalogue
     private val cart = Cart()
     private lateinit var cartCountFab: CounterFab
+    private var selectedTabName = defaultTab
+    private lateinit var bottomAppBar: BottomAppBar
 
     companion object {
         fun newInstance(): OrderingFragment = OrderingFragment()
@@ -52,6 +57,7 @@ class OrderingFragment : Fragment() {
 
         val searchItem = menu.findItem(R.id.searcher)
         val categoryItem = menu.findItem(R.id.showCategories)
+        val hideItem = menu.findItem(R.id.hideBar)
         val searchView = searchItem.actionView as SearchView
 
 //        val cartFab = activity?.findViewById<FloatingActionButton>(R.id.cartFab)
@@ -66,17 +72,23 @@ class OrderingFragment : Fragment() {
         })
 
         searchView.setOnSearchClickListener {
-            cartCountFab?.hide()
+            cartCountFab.hide()
         }
 
         searchView.setOnCloseListener {
-            cartCountFab?.show()
+            cartCountFab.show()
             false
         }
 
         categoryItem.setOnMenuItemClickListener {
             cart.clear()
             notifyFABbadge()
+            false
+        }
+
+        hideItem.setOnMenuItemClickListener {
+            cartCountFab.visibility = View.INVISIBLE
+            bottomAppBar.performHide()
             false
         }
     }
@@ -86,6 +98,8 @@ class OrderingFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         setHasOptionsMenu(true)
+        // Make sure default tab when view is created
+        selectedTabName = defaultTab
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_ordering, container, false)
     }
@@ -99,12 +113,18 @@ class OrderingFragment : Fragment() {
             topToTop = R.id.toolbar
         }
         val mainAct = (activity as MainActivity)
-        val bBar = view.findViewById<BottomAppBar>(R.id.bottomBar)
+        bottomAppBar = view.findViewById<BottomAppBar>(R.id.bottomBar)
         val tb = view.rootView.findViewById<Toolbar>(R.id.toolbar)
         tb.visibility = View.INVISIBLE
-        mainAct.setSupportActionBar(bBar)
+        mainAct.setSupportActionBar(bottomAppBar)
+        val bringBackAppBar = view.findViewById<ImageView>(R.id.bringBackAppbarButton)
 
         cartCountFab = view.findViewById<CounterFab>(R.id.cartFab)
+
+        bringBackAppBar.setOnClickListener{
+            cartCountFab.show()
+            bottomAppBar.performShow()
+        }
 
 //        val categoryRecycler = view.findViewById<RecyclerView>(R.id.categoryRecyclerBar)
 //        categoryAdapter = CategoryRecyclerViewAdapter()
@@ -120,9 +140,11 @@ class OrderingFragment : Fragment() {
         if(this.arguments != null) {
             currMenu = arguments?.getParcelable<Catalogue>("Menu") as Catalogue
             gatherCategories()
+            val tabLayout = view.findViewById<TabLayout>(R.id.categoryTabLayout)
+            setupTabs(tabLayout)
 
             val orderRecyclerView = view.findViewById<RecyclerView>(R.id.orderItemRecyclerList)
-            orderAdapter = OrderItemViewAdapter()
+            orderAdapter = OrderItemViewAdapter(currMenu.getItems())
             val orderLayoutMan = LinearLayoutManager(context)
             orderRecyclerView.adapter = orderAdapter
             orderRecyclerView.layoutManager = orderLayoutMan
@@ -132,8 +154,11 @@ class OrderingFragment : Fragment() {
             itemDec.setDrawable(context?.getDrawable(R.drawable.divider)!!)
             orderRecyclerView.addItemDecoration(itemDec)
 
-            val tabLayout = view.findViewById<TabLayout>(R.id.categoryTabLayout)
-            setupTabs(tabLayout)
+            // Let the FABScrollBehaviour know that the Button is anchored
+            // to make sure FAB hide/shows in sync with bottom app bar
+            val fabParams = cartCountFab.layoutParams as CoordinatorLayout.LayoutParams
+            val fabBehav = fabParams.behavior
+            (fabBehav as FABScrollBehaviour).setIsAnchored(true)
 
             cartCountFab.setOnClickListener{
                 val summaryFragment = OrderSummaryFragment.newInstance()
@@ -143,10 +168,15 @@ class OrderingFragment : Fragment() {
                 parentFragmentManager.beginTransaction().replace(R.id.manageMenuContainer, summaryFragment).addToBackStack(null).commit()
             }
 
+            orderRecyclerView
         }
 
     }
 
+    /**
+     * Function grab categories from item list to a set.
+     * This is to allow easy indexing categories
+     */
     private fun gatherCategories() {
         for (item in currMenu.getItems()) {
             if (!item.category.isNullOrEmpty())
@@ -154,12 +184,47 @@ class OrderingFragment : Fragment() {
         }
     }
 
+    /**
+     * Func to setup each category tab
+     */
     private fun setupTabs(tabLayout: TabLayout) {
         for (category in categorySet){
-            tabLayout.addTab(tabLayout.newTab().setText(category))
+            val tab = tabLayout.newTab()
+            tab.text = category
+            tabLayout.addTab(tab)
+
+            // Set up tab listener to help with filtering contents by category
+            tab.view.setOnClickListener {
+                println("tab text ${tab.text.toString()} prev tab ${selectedTabName}")
+                if (!tab.text.toString().equals(selectedTabName)) {
+                    /**
+                     * Only apply filter if selected tab is different from previous
+                     * selectedTabName.
+                     * The filter function could be expensive at the moment
+                     * with larger data set and should not be called
+                     * if user clicks on the same tab
+                     */
+                    selectedTabName = tab.text.toString()
+                    orderAdapter.filterItemsWhenTabSelected(currMenu.getItems())
+                    /**
+                     * Make FAB and bottom bar reappear.
+                     * Hide then show FAB since we are using a custom scroll behaviour
+                     * for fab and Fragment does not know if FAB is actually visible or not.
+                     */
+                    cartCountFab.visibility = View.VISIBLE
+                    cartCountFab.hide()
+                    cartCountFab.show()
+                    bottomAppBar.performShow()
+                    println("Is cart butt shown ? ${cartCountFab.isShown}")
+
+                }
+            }
         }
     }
 
+    /**
+     * Function to display FAB item count on View
+     */
     private fun notifyFABbadge() {
         val count = cart.getItemCount()
         if (count > 0) {
@@ -171,40 +236,15 @@ class OrderingFragment : Fragment() {
     }
 
     /**
-     * A horizontal category list that enables the user to filter items by category
-     */
-    inner class CategoryRecyclerViewAdapter : RecyclerView.Adapter<CategoryRecyclerViewAdapter.CategoryHolder>() {
-
-        inner class CategoryHolder(v: View) : RecyclerView.ViewHolder(v) {
-
-            private val textV = v.findViewById<TextView>(R.id.categoryItemName)
-
-            fun bind(category: String) {
-                textV.text = category
-            }
-        }
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryHolder {
-            val inflatedRowView = LayoutInflater.from(context).inflate(R.layout.category_recycle_row, parent, false)
-
-            return CategoryHolder(inflatedRowView)
-        }
-
-        override fun onBindViewHolder(holder: CategoryHolder, position: Int) {
-            val indexArr = categorySet.toArray()
-
-            holder.bind(indexArr[position].toString())
-        }
-
-        override fun getItemCount(): Int {
-            return categorySet.count()
-        }
-    }
-
-    /**
      * Recycler view that shows items to order available in menu
      */
-    inner class OrderItemViewAdapter : RecyclerView.Adapter<OrderItemViewAdapter.ItemHolder>() {
+    inner class OrderItemViewAdapter(itemList: MutableList<Item>) : RecyclerView.Adapter<OrderItemViewAdapter.ItemHolder>() {
+
+        private val orderItemList = mutableListOf<Item>()
+
+        init {
+            orderItemList.addAll(itemList)
+        }
 
         inner class ItemHolder(v: View) : RecyclerView.ViewHolder(v) {
 
@@ -236,11 +276,67 @@ class OrderingFragment : Fragment() {
         }
 
         override fun onBindViewHolder(holder: ItemHolder, position: Int) {
-            holder.bind(currMenu.getItems()[position])
+            val item = orderItemList[position]
+
+            holder.bind(item)
+
+            println("Update list view")
+
         }
 
         override fun getItemCount(): Int {
-            return currMenu.getItems().count()
+            return orderItemList.count()
+        }
+
+        /**
+         * This functions filters based on what tab is selected in this fragment
+         * Note: Should be called in a tab button click listener
+         */
+        fun filterItemsWhenTabSelected(toFilterList: MutableList<Item>) {
+            orderItemList.clear()
+            for (item in toFilterList) {
+                if (selectedTabName.equals(defaultTab)) {
+                    // Get all items if selected tab is All
+                    orderItemList.add(item)
+                }
+                else if (item.category.equals(selectedTabName)) {
+                    // Selected tab not default category then get items with relevant category
+                    orderItemList.add(item)
+                }
+            }
+            notifyDataSetChanged()
+
+        }
+    }
+
+    /**
+     * A horizontal category list that enables the user to filter items by category
+     */
+    inner class CategoryRecyclerViewAdapter : RecyclerView.Adapter<CategoryRecyclerViewAdapter.CategoryHolder>() {
+
+        inner class CategoryHolder(v: View) : RecyclerView.ViewHolder(v) {
+
+            private val textV = v.findViewById<TextView>(R.id.categoryItemName)
+
+            fun bind(category: String) {
+                textV.text = category
+            }
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryHolder {
+            val inflatedRowView = LayoutInflater.from(context).inflate(R.layout.category_recycle_row, parent, false)
+
+            return CategoryHolder(inflatedRowView)
+        }
+
+        override fun onBindViewHolder(holder: CategoryHolder, position: Int) {
+            val indexArr = categorySet.toArray()
+
+            holder.bind(indexArr[position].toString())
+        }
+
+        override fun getItemCount(): Int {
+            return categorySet.count()
         }
     }
 }
