@@ -37,14 +37,6 @@
 <!--        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" >-->
 <!--    </androidx.recyclerview.widget.RecyclerView>-->
 
-    <ImageView
-        android:id="@+id/bringBackAppbarButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center"
-        android:background="@drawable/ic_baseline_show_arrow_up_24">
-    </ImageView>
-
     <!--  Available items in list  -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/orderItemRecyclerList"
@@ -57,6 +49,14 @@
         android:layout_marginLeft="5dp"
         android:layout_marginStart="5dp">
     </androidx.recyclerview.widget.RecyclerView>
+
+    <ImageView
+        android:id="@+id/bringBackAppbarButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:background="@drawable/ic_baseline_show_arrow_up_24">
+    </ImageView>
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottomBar"

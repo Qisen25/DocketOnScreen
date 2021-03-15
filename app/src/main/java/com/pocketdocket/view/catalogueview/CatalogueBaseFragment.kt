@@ -54,7 +54,7 @@ class CatalogueBaseFragment : Fragment() {
         tb.title = ""
 
         tb.setNavigationOnClickListener {
-            // Go back to previous fragment (Should be the Main Menu
+            // Go back to previous fragment
             parentFragmentManager.popBackStack()
         }
 

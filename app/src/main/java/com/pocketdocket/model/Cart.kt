@@ -34,6 +34,10 @@ class Cart() : Parcelable{
         return cartList.count()
     }
 
+    fun get(index: Int): ItemOrder {
+        return cartList[index]
+    }
+
     /**
      * Get total item count in this cart
      * This included duplication of items

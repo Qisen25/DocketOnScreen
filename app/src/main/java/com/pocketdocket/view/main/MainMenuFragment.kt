@@ -1,6 +1,8 @@
 package com.pocketdocket.view.main
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -25,14 +27,11 @@ class MainMenuFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        view.findViewById<Button>(R.id.button_first).setOnClickListener {
-//            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
-//        }
-
-        view.findViewById<Button>(R.id.addEditMenuButton).setOnClickListener { view ->
+        // Load screen using handler to prevent blocking background thread
+        Handler(Looper.getMainLooper()).postDelayed({
             val frag = CatalogueBaseFragment.newInstance()
             this.openAddMenuFrag(frag)
-        }
+        }, 3000)
     }
 
     companion object {
@@ -45,6 +44,6 @@ class MainMenuFragment : Fragment() {
     private fun openAddMenuFrag(fragment: Fragment) {
         // Get fragment manager
         // This replaces main activity's frame layout container which allows main activity to be used without creating more activities
-        parentFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment).addToBackStack(null).commit()
+        parentFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment).commit()
     }
 }

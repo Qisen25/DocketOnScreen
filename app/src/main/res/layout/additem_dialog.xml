@@ -78,7 +78,8 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="description (optional)"
-                android:inputType="text|textMultiLine">
+                android:inputType="text|textMultiLine"
+                android:maxLines="4">
 
             </com.google.android.material.textfield.TextInputEditText>
 

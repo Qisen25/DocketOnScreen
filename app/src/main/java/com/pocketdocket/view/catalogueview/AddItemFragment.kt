@@ -19,6 +19,7 @@ import com.pocketdocket.model.Catalogue
 import com.pocketdocket.model.CatalogueRepository
 import com.pocketdocket.model.Item
 import androidx.appcompat.widget.Toolbar
+import com.pocketdocket.view.main.MainActivity
 
 /**
  * Fragment view for adding dishes to a menu
