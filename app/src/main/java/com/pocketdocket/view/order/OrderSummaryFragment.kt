@@ -6,16 +6,18 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import android.widget.EditText
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.core.view.get
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import com.pocketdocket.R
 import com.pocketdocket.model.Cart
-import com.pocketdocket.model.Item
 import com.pocketdocket.model.ItemOrder
 
 
@@ -23,6 +25,9 @@ import com.pocketdocket.model.ItemOrder
  * Order summary fragment
  */
 class OrderSummaryFragment : Fragment() {
+
+    private lateinit var totalCostTextView: TextView
+    private lateinit var cart: Cart
 
     companion object {
         fun newInstance(): OrderSummaryFragment = OrderSummaryFragment()
@@ -44,13 +49,30 @@ class OrderSummaryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val cart = requireArguments().getParcelable<Cart>("Cart")
+        cart = requireArguments().getParcelable<Cart>("Cart")!!
 
-        val prompt = "${cart?.getItemCount()} Items"
+        val prompt = "${cart.getItemCount()} Items"
         view.findViewById<TextView>(R.id.itemCountText).text = prompt
 
         val cancelButt = view.findViewById<TextView>(R.id.cancelOrderButton)
         val confirmPrintButt = view.findViewById<TextView>(R.id.confirmAndPrint)
+        totalCostTextView = view.findViewById<TextView>(R.id.totalCostTextView)
+
+        val radioButtonGroup = view.findViewById<RadioGroup>(R.id.surchargeDiscountRadio)
+        val rateTextView = view.findViewById<EditText>(R.id.surchargeDiscountEditText)
+
+        totalCostTextView.text = "Total: $${cart?.getTotalCost()}"
+
+        radioButtonGroup.setOnCheckedChangeListener { group, checkedId ->
+            if (!cart.isEmpty()) {
+                val rateString = rateTextView.text.toString()
+                if (checkedId == R.id.surchargeRadioButton && rateString.isNotEmpty()) {
+                    applySurcharge(rateString.toDouble()/100.0)
+                } else if (checkedId == R.id.discountRadioButton && rateString.isNotEmpty()) {
+                    applyDiscount(rateString.toDouble()/100.0)
+                }
+            }
+        }
 
         confirmPrintButt.setOnClickListener {
             parentFragmentManager.popBackStack()
@@ -70,6 +92,30 @@ class OrderSummaryFragment : Fragment() {
         val itemDec = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
         itemDec.setDrawable(context?.getDrawable(R.drawable.divider)!!)
         orderSummaryRecyclerView.addItemDecoration(itemDec)
+    }
+
+    /**
+     * Apply surcharge and update total cost view
+     * @param rate - should be in decimal form when importing
+     */
+    private fun applySurcharge(rate: Double) {
+        val subTotal = cart.getTotalCost()
+        val surchargePrice = subTotal * rate
+        val total = subTotal * (1.0 + rate)
+
+        totalCostTextView.text = "Sub total: $$subTotal\nSurcharge: +$$surchargePrice\nTotal: $${"%.2f".format(total)}"
+    }
+
+    /**
+     * Apply discount and update total cost view
+     * @param rate - should be in decimal form when importing
+     */
+    private fun applyDiscount(rate: Double) {
+        val subTotal = cart.getTotalCost()
+        val discount = subTotal * rate
+        val total = subTotal * (1.0 - rate)
+
+        totalCostTextView.text = "Sub total: $$subTotal\nDiscount: -$$discount\nTotal: $${"%.2f".format(total)}"
     }
 
     inner class CartSummaryViewAdapter(private val cart: Cart) : RecyclerView.Adapter<CartSummaryViewAdapter.ItemOrderHolder>() {

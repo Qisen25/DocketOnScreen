@@ -51,6 +51,20 @@ class Cart() : Parcelable{
         return totalCount
     }
 
+    fun getTotalCost(): Double {
+        var total = 0.0
+
+        for (item in cartList) {
+            total += item.getCost()
+        }
+
+        return total
+    }
+
+    fun isEmpty(): Boolean {
+        return cartList.isEmpty()
+    }
+
     fun clear() {
         cartList.clear()
     }

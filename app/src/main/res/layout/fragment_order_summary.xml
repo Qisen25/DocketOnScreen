@@ -17,10 +17,10 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:background="@color/guyabano"
+        app:layout_constraintBottom_toTopOf="@id/barrier5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.9"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/barrier5"
         app:layout_constraintTop_toTopOf="parent">
 
     </androidx.recyclerview.widget.RecyclerView>
@@ -41,30 +41,15 @@
             android:orientation="vertical"
             app:layout_constraintGuide_begin="16dp" />
 
-        <TextView
-            android:id="@+id/itemCountText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="28dp"
-            android:layout_marginLeft="28dp"
-            android:text="@string/hello_blank_fragment"
-            android:textColor="@color/black"
-            app:layout_constraintStart_toStartOf="@id/guideline2"
-            app:layout_constraintTop_toBottomOf="@+id/surchargeDiscountEditText" />
-
         <EditText
             android:id="@+id/idNameDetail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="183dp"
-            android:layout_marginRight="183dp"
             android:ems="10"
             android:hint="Name/id/table"
             android:inputType="textPersonName"
+            android:textSize="12dp"
             app:layout_constraintBottom_toTopOf="@id/extraInfoTextEdits"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@id/guideline2"
             app:layout_constraintTop_toBottomOf="@+id/orderType" />
 
@@ -79,67 +64,14 @@
             app:layout_constraintStart_toStartOf="@id/guideline2"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <EditText
-            android:id="@+id/surchargeDiscountEditText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="100dp"
-            android:ems="5"
-            android:hint="Optional %"
-            android:inputType="numberDecimal"
-            app:layout_constraintBottom_toTopOf="@id/itemCountText"
-            app:layout_constraintStart_toStartOf="@id/guideline2"
-            app:layout_constraintTop_toBottomOf="@+id/commentsTextEdit" />
-
-        <RadioGroup
-            android:id="@+id/radioGroup"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="100dp"
-            android:layout_marginRight="100dp"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@id/orderCostText"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.551"
-            app:layout_constraintStart_toEndOf="@+id/surchargeDiscountEditText"
-            app:layout_constraintTop_toBottomOf="@+id/commentsTextEdit">
-
-            <RadioButton
-                android:id="@+id/radioButton2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Surcharge"
-                android:textSize="12dp" />
-
-            <RadioButton
-                android:id="@+id/radioButton3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Discount"
-                android:textSize="12dp" />
-        </RadioGroup>
-
-        <TextView
-            android:id="@+id/orderCostText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="60dp"
-            android:layout_marginLeft="60dp"
-            android:text="Total price: "
-            android:textColor="@color/black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/itemCountText"
-            app:layout_constraintTop_toBottomOf="@+id/surchargeDiscountEditText" />
+        <!--       -->
 
         <LinearLayout
             android:id="@+id/extraInfoTextEdits"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
             android:orientation="vertical"
+            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@id/commentsTextEdit"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -151,13 +83,16 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="phone number"
-                android:inputType="phone" />
+                android:inputType="phone"
+                android:textSize="12dp" />
 
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="House Address..." />
+                android:ems="15"
+                android:hint="House Address..."
+                android:maxLines="2"
+                android:textSize="12dp" />
 
         </LinearLayout>
 
@@ -167,17 +102,127 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="185dp"
             android:layout_marginRight="185dp"
-            android:ems="10"
+            android:layout_marginBottom="8dp"
+            android:ems="15"
             android:hint="Comments (optional)"
             android:inputType="textMultiLine"
-            android:maxLines="3"
-            app:layout_constraintBottom_toTopOf="@id/surchargeDiscountEditText"
+            android:maxLines="4"
+            android:textSize="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@id/guideline2"
             app:layout_constraintTop_toBottomOf="@id/extraInfoTextEdits" />
 
+        <EditText
+            android:id="@+id/numOfPplEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginRight="25dp"
+            android:ems="6"
+            android:inputType="number"
+            android:textSize="12dp"
+            android:hint="# of people"
+            app:layout_constraintBottom_toTopOf="@+id/extraInfoTextEdits"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/idNameDetail"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/priceCardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        app:cardElevation="2dp"
+        app:layout_constraintBottom_toTopOf="@id/cancelConfirmContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/customerDetailContainer"
+        app:strokeColor="@color/pre_whitesmoke"
+        app:strokeWidth="2dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <EditText
+                android:id="@+id/surchargeDiscountEditText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:ems="5"
+                android:hint="Optional %"
+                android:inputType="numberDecimal"
+                android:textSize="12dp"
+                app:layout_constraintEnd_toStartOf="@id/surchargeDiscountRadio"
+                app:layout_constraintStart_toEndOf="@+id/totalCostTextView"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/itemCountText"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="0 Items"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/totalCostTextView" />
+
+            <TextView
+                android:id="@+id/totalCostTextView"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="8dp"
+                android:text="Total: "
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <RadioGroup
+                android:id="@+id/surchargeDiscountRadio"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/surchargeDiscountEditText"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <RadioButton
+                    android:id="@+id/surchargeRadioButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:text="Surcharge"
+                    android:textSize="10dp" />
+
+                <RadioButton
+                    android:id="@+id/discountRadioButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Discount"
+                    android:textSize="10dp" />
+            </RadioGroup>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
 
     <LinearLayout
         android:id="@+id/cancelConfirmContainer"
@@ -189,7 +234,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.6"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/customerDetailContainer">
+        app:layout_constraintTop_toBottomOf="@+id/priceCardView">
 
         <TextView
             android:id="@+id/cancelOrderButton"
