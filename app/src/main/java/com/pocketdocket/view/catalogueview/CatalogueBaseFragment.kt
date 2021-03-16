@@ -66,7 +66,7 @@ class CatalogueBaseFragment : Fragment() {
      */
     private fun setupMenuAdder() {
         val adderFrag = CatalogueManagerFragment.newInstance()
-        parentFragmentManager.beginTransaction().replace(R.id.manageMenuContainer, adderFrag).commit()
+        parentFragmentManager.beginTransaction().replace(R.id.manageMenuContainer, adderFrag).commitAllowingStateLoss()
     }
 
 }

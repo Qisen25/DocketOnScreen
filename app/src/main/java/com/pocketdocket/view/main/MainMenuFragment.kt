@@ -44,6 +44,6 @@ class MainMenuFragment : Fragment() {
     private fun openAddMenuFrag(fragment: Fragment) {
         // Get fragment manager
         // This replaces main activity's frame layout container which allows main activity to be used without creating more activities
-        parentFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment).commit()
+        parentFragmentManager.beginTransaction().replace(R.id.mainContainer, fragment).commitAllowingStateLoss()
     }
 }
