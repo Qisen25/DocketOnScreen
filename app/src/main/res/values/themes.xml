@@ -44,4 +44,10 @@
         <item name="tabSelectedTextColor">@color/white</item>
         <item name="tabTextColor">@color/pre_whitesmoke</item>
     </style>
+
+<!-- Chip selector style -->
+    <style name="ChipSelectStyle" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="android:textColor">@drawable/text_selected</item>
+        <item name="chipBackgroundColor">@drawable/chip_selected</item>
+    </style>
 </resources>

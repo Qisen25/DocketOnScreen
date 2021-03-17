@@ -8,6 +8,7 @@ import android.os.Parcelable
  */
 class Cart() : Parcelable{
     private val cartList: MutableList<ItemOrder> = mutableListOf()
+    var rate = 0.0
 
     constructor(parcel: Parcel) : this() {
     }
@@ -51,11 +52,29 @@ class Cart() : Parcelable{
         return totalCount
     }
 
-    fun getTotalCost(): Double {
+    fun getSubTotalCost(): Double {
         var total = 0.0
 
         for (item in cartList) {
             total += item.getCost()
+        }
+
+        return total
+    }
+
+    fun getExtraFee(): Double {
+        val extra = getSubTotalCost() * rate
+        return extra
+    }
+
+    fun getFinalTotal(extraFeeType: Int = 0): Double {
+        val subTotal = getSubTotalCost()
+        var total = subTotal
+        if (extraFeeType == SURCHARGED && rate != 0.0) {
+            total = subTotal + getExtraFee()
+        }
+        else if (extraFeeType == DISCOUNTED && rate != 0.0) {
+            total = subTotal - getExtraFee()
         }
 
         return total
@@ -69,6 +88,10 @@ class Cart() : Parcelable{
         cartList.clear()
     }
 
+    fun getItemOrderList(): MutableList<ItemOrder> {
+        return cartList
+    }
+
     override fun describeContents(): Int {
         return 0
     }
@@ -78,6 +101,9 @@ class Cart() : Parcelable{
     }
 
     companion object CREATOR : Parcelable.Creator<Cart> {
+        var DISCOUNTED = 1
+        var SURCHARGED = 2
+
         override fun createFromParcel(parcel: Parcel): Cart {
             return Cart(parcel)
         }

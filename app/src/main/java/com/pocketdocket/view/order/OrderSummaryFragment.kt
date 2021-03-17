@@ -1,24 +1,33 @@
 package com.pocketdocket.view.order
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.print.PrintManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.RadioButton
-import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.annotation.RequiresApi
-import androidx.core.view.get
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
+import com.itextpdf.text.Document
+import com.itextpdf.text.PageSize
+import com.itextpdf.text.Paragraph
+import com.itextpdf.text.pdf.PdfWriter
 import com.pocketdocket.R
 import com.pocketdocket.model.Cart
 import com.pocketdocket.model.ItemOrder
+import com.pocketdocket.print.PdfBuildHelper
+import com.pocketdocket.print.PrintAdapter
+import java.io.File
+import java.io.FileOutputStream
 
 
 /**
@@ -28,6 +37,7 @@ class OrderSummaryFragment : Fragment() {
 
     private lateinit var totalCostTextView: TextView
     private lateinit var cart: Cart
+    private lateinit var customerDetails: Array<String>
 
     companion object {
         fun newInstance(): OrderSummaryFragment = OrderSummaryFragment()
@@ -38,8 +48,8 @@ class OrderSummaryFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_order_summary, container, false)
@@ -58,24 +68,57 @@ class OrderSummaryFragment : Fragment() {
         val confirmPrintButt = view.findViewById<TextView>(R.id.confirmAndPrint)
         totalCostTextView = view.findViewById<TextView>(R.id.totalCostTextView)
 
-        val radioButtonGroup = view.findViewById<RadioGroup>(R.id.surchargeDiscountRadio)
+        val chipGroup = view.findViewById<ChipGroup>(R.id.chipGroup)
         val rateTextView = view.findViewById<EditText>(R.id.surchargeDiscountEditText)
 
-        totalCostTextView.text = "Total: $${cart?.getTotalCost()}"
+        totalCostTextView.text = "Total: $${cart?.getSubTotalCost()}"
 
-        radioButtonGroup.setOnCheckedChangeListener { group, checkedId ->
+        chipGroup.setOnCheckedChangeListener { group, checkedId ->
             if (!cart.isEmpty()) {
                 val rateString = rateTextView.text.toString()
-                if (checkedId == R.id.surchargeRadioButton && rateString.isNotEmpty()) {
-                    applySurcharge(rateString.toDouble()/100.0)
-                } else if (checkedId == R.id.discountRadioButton && rateString.isNotEmpty()) {
-                    applyDiscount(rateString.toDouble()/100.0)
+                if (checkedId == R.id.surchargeChip && rateString.isNotEmpty()) {
+                    applySurcharge(rateString.toDouble() / 100.0)
+                } else if (checkedId == R.id.discountChip && rateString.isNotEmpty()) {
+                    applyDiscount(rateString.toDouble() / 100.0)
+                }
+                else {
+                    totalCostTextView.text = "Total: $${cart?.getSubTotalCost()}"
                 }
             }
         }
 
         confirmPrintButt.setOnClickListener {
-            parentFragmentManager.popBackStack()
+            try {
+                parentFragmentManager.popBackStack()
+                val document = Document()
+                val path = File(requireContext().externalCacheDir.toString())
+
+                val file = File(path, "Docket.pdf")
+
+                path.mkdir()
+
+                PdfWriter.getInstance(document, FileOutputStream(file.path))
+
+                document.open()
+
+                document.pageSize = PageSize.A7
+                document.addCreationDate()
+                document.addAuthor("Pocket Docket")
+
+                fetchCustomerDetails(view)
+
+                val buildPdf = PdfBuildHelper(cart, document, totalCostTextView.text.toString(), customerDetails)
+                buildPdf.build()
+
+                document.close()
+
+                val printManager = requireActivity().getSystemService(Context.PRINT_SERVICE) as PrintManager
+                val printAdapt = PrintAdapter(requireContext(), file.path)
+                printManager.print("Docket print", printAdapt, null)
+            }
+            catch (e: Exception) {
+                Log.e("File output error", e.message!!)
+            }
         }
 
         cancelButt.setOnClickListener {
@@ -99,9 +142,10 @@ class OrderSummaryFragment : Fragment() {
      * @param rate - should be in decimal form when importing
      */
     private fun applySurcharge(rate: Double) {
-        val subTotal = cart.getTotalCost()
-        val surchargePrice = subTotal * rate
-        val total = subTotal * (1.0 + rate)
+        cart.rate = rate
+        val subTotal = cart.getSubTotalCost()
+        val surchargePrice = cart.getExtraFee()
+        val total = cart.getFinalTotal(Cart.SURCHARGED)
 
         totalCostTextView.text = "Sub total: $$subTotal\nSurcharge: +$$surchargePrice\nTotal: $${"%.2f".format(total)}"
     }
@@ -111,11 +155,23 @@ class OrderSummaryFragment : Fragment() {
      * @param rate - should be in decimal form when importing
      */
     private fun applyDiscount(rate: Double) {
-        val subTotal = cart.getTotalCost()
-        val discount = subTotal * rate
-        val total = subTotal * (1.0 - rate)
+        cart.rate = rate
+        val subTotal = cart.getSubTotalCost()
+        val discount = cart.getExtraFee()
+        val total = cart.getFinalTotal(Cart.DISCOUNTED)
 
         totalCostTextView.text = "Sub total: $$subTotal\nDiscount: -$$discount\nTotal: $${"%.2f".format(total)}"
+    }
+
+    private fun fetchCustomerDetails(view: View) {
+        val nameIdEditText = view.findViewById<EditText>(R.id.idNameDetail)
+        val phoneEditText = view.findViewById<EditText>(R.id.phoneNumEditText)
+        val addressEditText = view.findViewById<EditText>(R.id.addressEditText)
+        val commentEditText = view.findViewById<EditText>(R.id.commentsTextEdit)
+        val numOfPplEditText = view.findViewById<EditText>(R.id.numOfPplEditText)
+
+       customerDetails = arrayOf(nameIdEditText.text.toString(), numOfPplEditText.text.toString(),  phoneEditText.text.toString(),
+                            addressEditText.text.toString(), commentEditText.text.toString())
     }
 
     inner class CartSummaryViewAdapter(private val cart: Cart) : RecyclerView.Adapter<CartSummaryViewAdapter.ItemOrderHolder>() {

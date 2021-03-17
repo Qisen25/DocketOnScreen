@@ -123,6 +123,7 @@ class OrderingFragment : Fragment() {
 
         bringBackAppBar.setOnClickListener{
             cartCountFab.show()
+            cartCountFab.visibility = View.VISIBLE
             bottomAppBar.performShow()
         }
 
