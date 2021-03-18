@@ -5,45 +5,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".view.main.MainMenuFragment"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/dodgerblue">
+
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/appName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="PocketDocket"
-        android:textSize="50dp"
+        android:text="DocketOnScreen"
+        android:textColor="@color/white"
+        android:textSize="30dp"
         app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.499">
 
     </TextView>
 
-<!--    <Button-->
-<!--        android:id="@+id/addEditMenuButton"-->
-<!--        android:layout_width="350dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="100dp"-->
-<!--        android:gravity="center_horizontal"-->
-<!--        android:text="Add/Edit Menu"-->
-<!--        android:textSize="20dp"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/textView2"></Button>-->
-
-<!--    <Button-->
-<!--        android:id="@+id/menuSelection"-->
-<!--        android:layout_width="350dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:gravity="center_horizontal"-->
-<!--        android:text="Select Menu"-->
-<!--        android:textSize="20dp"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/addEditMenuButton"-->
-<!--        app:layout_constraintVertical_bias="0.214"></Button>-->
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:src="@drawable/ic_docketonscreenlightscreen"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.424">
+    </ImageView>
 
     <Button
         android:id="@+id/button"
