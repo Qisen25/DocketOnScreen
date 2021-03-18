@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/FirstFragment"
-        android:name="com.pocketdocket.view.main.MainMenuFragment"
+        android:name="com.docketonscreen.view.main.MainMenuFragment"
         android:label="@string/first_fragment_label"
         tools:layout="@layout/fragment_mainmenu">
 
@@ -17,7 +17,7 @@
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"
-        android:name="com.pocketdocket.view.catalogueview.CatalogueBaseFragment"
+        android:name="com.docketonscreen.view.catalogueview.CatalogueBaseFragment"
         android:label="@string/second_fragment_label"
         tools:layout="@layout/fragment_catalogue_base">
 

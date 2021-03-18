@@ -82,7 +82,7 @@
         app:badgeTextColor="@color/white"
         app:tint="@color/white"
         app:layout_anchor="@+id/bottomBar"
-        app:layout_behavior="com.pocketdocket.behaviour.FABScrollBehaviour">
+        app:layout_behavior="com.docketonscreen.behaviour.FABScrollBehaviour">
     </com.andremion.counterfab.CounterFab>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

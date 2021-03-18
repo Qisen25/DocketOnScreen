@@ -22,7 +22,7 @@
         android:layout_marginRight="20dp"
         android:src="@android:drawable/ic_input_add"
         app:backgroundTint="@color/dodgerblue"
-        app:layout_behavior="com.pocketdocket.behaviour.FABScrollBehaviour" />
+        app:layout_behavior="com.docketonscreen.behaviour.FABScrollBehaviour" />
 
     <LinearLayout
         android:id="@+id/addMenuInputContainer"

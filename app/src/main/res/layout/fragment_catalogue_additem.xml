@@ -30,6 +30,6 @@
         android:backgroundTint="#EE851C"
         android:src="@android:drawable/ic_input_add"
         app:backgroundTint="@android:color/holo_purple"
-        app:layout_behavior="com.pocketdocket.behaviour.FABScrollBehaviour"/>
+        app:layout_behavior="com.docketonscreen.behaviour.FABScrollBehaviour"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
