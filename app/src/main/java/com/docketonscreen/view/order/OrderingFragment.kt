@@ -101,7 +101,10 @@ class OrderingFragment : Fragment() {
         // Make sure default tab when view is created
         selectedTabName = defaultTab
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_ordering, container, false)
+        val view = inflater.inflate(R.layout.fragment_ordering, container, false)
+        cartCountFab = view.findViewById<CounterFab>(R.id.cartFab)
+        notifyFABbadge()
+        return view
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -118,8 +121,6 @@ class OrderingFragment : Fragment() {
         tb.visibility = View.INVISIBLE
         mainAct.setSupportActionBar(bottomAppBar)
         val bringBackAppBar = view.findViewById<ImageView>(R.id.bringBackAppbarButton)
-
-        cartCountFab = view.findViewById<CounterFab>(R.id.cartFab)
 
         bringBackAppBar.setOnClickListener{
             cartCountFab.show()
@@ -170,8 +171,6 @@ class OrderingFragment : Fragment() {
 
                 parentFragmentManager.beginTransaction().replace(R.id.manageMenuContainer, summaryFragment).addToBackStack(null).commit()
             }
-
-            orderRecyclerView
         }
 
     }
@@ -283,8 +282,7 @@ class OrderingFragment : Fragment() {
 
             holder.bind(item)
 
-            println("Update list view")
-
+            notifyFABbadge()
         }
 
         override fun getItemCount(): Int {

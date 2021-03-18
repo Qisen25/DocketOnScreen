@@ -4,6 +4,8 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.print.PrintManager
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +18,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.andremion.counterfab.CounterFab
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
 import com.itextpdf.text.Document
@@ -40,6 +43,22 @@ class OrderSummaryFragment : Fragment() {
     private lateinit var cart: Cart
     private lateinit var customerDetails: Array<String>
 
+    private lateinit var nameIdEditText: EditText
+    private lateinit var phoneEditText: EditText
+    private lateinit var addressEditText: EditText
+    private lateinit var commentEditText: EditText
+    private lateinit var numOfPplEditText: EditText
+
+    private val textWatcher = object : TextWatcher {
+        override fun afterTextChanged(s: Editable?) {
+        }
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+        }
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            fetchCustomerDetails()
+        }
+    }
+
     companion object {
         fun newInstance(): OrderSummaryFragment = OrderSummaryFragment()
     }
@@ -59,7 +78,6 @@ class OrderSummaryFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         cart = requireArguments().getParcelable<Cart>("Cart")!!
         cart.extraFeeType = Cart.NONE
 
@@ -72,6 +90,19 @@ class OrderSummaryFragment : Fragment() {
         val chipGroup = view.findViewById<ChipGroup>(R.id.chipGroup)
         val rateTextView = view.findViewById<EditText>(R.id.surchargeDiscountEditText)
 
+        nameIdEditText = view.findViewById<EditText>(R.id.idNameDetail)
+        phoneEditText = view.findViewById<EditText>(R.id.phoneNumEditText)
+        addressEditText = view.findViewById<EditText>(R.id.addressEditText)
+        commentEditText = view.findViewById<EditText>(R.id.commentsTextEdit)
+        numOfPplEditText = view.findViewById<EditText>(R.id.numOfPplEditText)
+
+//        nameIdEditText.addTextChangedListener(textWatcher)
+//        phoneEditText.addTextChangedListener(textWatcher)
+//        addressEditText.addTextChangedListener(textWatcher)
+//        commentEditText.addTextChangedListener(textWatcher)
+//        numOfPplEditText.addTextChangedListener(textWatcher)
+
+        loadCustomerDetailsIntoEditTexts()
         updateTotalSummaryView()
 
         chipGroup.setOnCheckedChangeListener { group, checkedId ->
@@ -107,7 +138,7 @@ class OrderSummaryFragment : Fragment() {
                 document.addCreationDate()
                 document.addAuthor("Pocket Docket")
 
-                fetchCustomerDetails(view)
+                fetchCustomerDetails()
 
                 val buildPdf = PdfBuildHelper(cart, document, totalCostTextView.text.toString(), customerDetails)
                 buildPdf.build()
@@ -124,6 +155,7 @@ class OrderSummaryFragment : Fragment() {
         }
 
         cancelButt.setOnClickListener {
+            fetchCustomerDetails()
             parentFragmentManager.popBackStack()
         }
 
@@ -169,15 +201,26 @@ class OrderSummaryFragment : Fragment() {
     /**
      * Get customer details from edit texts
      */
-    private fun fetchCustomerDetails(view: View) {
-        val nameIdEditText = view.findViewById<EditText>(R.id.idNameDetail)
-        val phoneEditText = view.findViewById<EditText>(R.id.phoneNumEditText)
-        val addressEditText = view.findViewById<EditText>(R.id.addressEditText)
-        val commentEditText = view.findViewById<EditText>(R.id.commentsTextEdit)
-        val numOfPplEditText = view.findViewById<EditText>(R.id.numOfPplEditText)
-
+    private fun fetchCustomerDetails() {
        customerDetails = arrayOf(nameIdEditText.text.toString(), numOfPplEditText.text.toString(),  phoneEditText.text.toString(),
                             addressEditText.text.toString(), commentEditText.text.toString())
+
+        cart.customerDetails = customerDetails
+    }
+
+    private fun loadCustomerDetailsIntoEditTexts() {
+        val editTexts = arrayOf<EditText>(nameIdEditText, numOfPplEditText,  phoneEditText,
+            addressEditText, commentEditText)
+
+        if (cart.customerDetails.isNotEmpty()) {
+            var i = 0
+            while (i < editTexts.size) {
+                if (!cart.customerDetails[i].isNullOrEmpty()) {
+                    editTexts[i].setText(cart.customerDetails[i])
+                }
+                i++
+            }
+        }
     }
 
     /**

@@ -11,9 +11,7 @@ class Cart(var menuName: String = "") : Parcelable{
     var rate = 0.0
     var extraFeeType = 0
     var comments = ""
-    var customerDetails: CustomerDetail?
-        get() = customerDetails
-        set(value) {customerDetails = value}
+    var customerDetails: Array<String> = arrayOf()
 
     constructor(parcel: Parcel) : this(parcel.readString()!!) {
         rate = parcel.readDouble()
@@ -109,7 +107,7 @@ class Cart(var menuName: String = "") : Parcelable{
         clear()
         extraFeeType = 0
         rate = 0.0
-        customerDetails = null
+        customerDetails = arrayOf()
         comments = ""
     }
 
