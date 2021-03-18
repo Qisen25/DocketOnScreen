@@ -10,7 +10,7 @@ import com.docketonscreen.model.Cart
  * Class that helps build order into a pdf document
  * Note: I assume any print could take this documents but I'm not sure about POS thermal printers
  */
-class PdfBuildHelper(val cart: Cart, private val document: Document, private val costSumarry: String, private val customerDetails: Array<String>) {
+class PdfBuildHelper(val cart: Cart, private val document: Document, private val costSummary: String, private val customerDetails: Array<String>) {
 
     /**
      * Function to build/style document
@@ -38,8 +38,9 @@ class PdfBuildHelper(val cart: Cart, private val document: Document, private val
 
         addLineSeparator(document)
 
-        // Add cost summary
-        addItem(costSumarry, Element.ALIGN_RIGHT, standoutFont)
+        // Add item count and cost summary
+        addItem("${cart.getItemCount()} Items", Element.ALIGN_RIGHT, standoutFont)
+        addItem(costSummary, Element.ALIGN_RIGHT, standoutFont)
 
         addLineSeparator(document)
 

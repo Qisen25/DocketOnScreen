@@ -6,9 +6,14 @@ import android.os.Parcelable
 /**
  * Cart that lists all the items added by the the user
  */
-class Cart(val menuName: String) : Parcelable{
+class Cart(var menuName: String = "") : Parcelable{
     private val cartList: MutableList<ItemOrder> = mutableListOf()
     var rate = 0.0
+    var extraFeeType = 0
+    var comments = ""
+    var customerDetails: CustomerDetail?
+        get() = customerDetails
+        set(value) {customerDetails = value}
 
     constructor(parcel: Parcel) : this(parcel.readString()!!) {
         rate = parcel.readDouble()
@@ -68,7 +73,7 @@ class Cart(val menuName: String) : Parcelable{
         return extra
     }
 
-    fun getFinalTotal(extraFeeType: Int = 0): Double {
+    fun getFinalTotal(): Double {
         val subTotal = getSubTotalCost()
         var total = subTotal
         if (extraFeeType == SURCHARGED && rate != 0.0) {
@@ -81,12 +86,31 @@ class Cart(val menuName: String) : Parcelable{
         return total
     }
 
+    fun finalTotalString(): String {
+        if (extraFeeType == SURCHARGED) {
+            return "Sub total: $${getSubTotalCost()}\nSurcharge: +$${getExtraFee()}\nTotal: $${"%.2f".format(getFinalTotal())}"
+        }
+        else if (extraFeeType == DISCOUNTED) {
+            return "Sub total: $${getSubTotalCost()}\nDiscount: -$${getExtraFee()}\nTotal: $${"%.2f".format(getFinalTotal())}"
+        }
+
+        return "Total: $${getSubTotalCost()}"
+    }
+
     fun isEmpty(): Boolean {
         return cartList.isEmpty()
     }
 
     fun clear() {
         cartList.clear()
+    }
+
+    fun reset() {
+        clear()
+        extraFeeType = 0
+        rate = 0.0
+        customerDetails = null
+        comments = ""
     }
 
     fun getItemOrderList(): MutableList<ItemOrder> {
@@ -103,6 +127,7 @@ class Cart(val menuName: String) : Parcelable{
     }
 
     companion object CREATOR : Parcelable.Creator<Cart> {
+        var NONE = 0
         var DISCOUNTED = 1
         var SURCHARGED = 2
 

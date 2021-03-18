@@ -13,7 +13,7 @@ import com.docketonscreen.database.SchemaInfo
  */
 class CatalogueRepository {
     companion object {
-        var menus: MutableList<Catalogue> = mutableListOf<Catalogue>()
+        lateinit var menus: MutableList<Catalogue>
         private lateinit var db: SQLiteDatabase
         // Keep track of menu index
 
@@ -21,7 +21,7 @@ class CatalogueRepository {
          * start up database
          */
         fun load(context: Context) {
-
+            menus = mutableListOf<Catalogue>()
             db = AppDatabaseHelper(context).writableDatabase
             loadMenus()
         }

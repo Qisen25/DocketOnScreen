@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.PocketDocket" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.DocketOnScreen" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/dodgerblue</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>

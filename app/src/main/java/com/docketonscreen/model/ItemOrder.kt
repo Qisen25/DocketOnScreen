@@ -21,7 +21,7 @@ data class ItemOrder(val item: Item, var amount: Int = 1) : Parcelable{
     }
 
     fun getCost(): Double {
-        return item.price
+        return item.price * amount
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {

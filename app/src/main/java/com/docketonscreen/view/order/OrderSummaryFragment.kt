@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
@@ -35,6 +36,7 @@ import java.io.FileOutputStream
 class OrderSummaryFragment : Fragment() {
 
     private lateinit var totalCostTextView: TextView
+    private lateinit var itemCountTextView: TextView
     private lateinit var cart: Cart
     private lateinit var customerDetails: Array<String>
 
@@ -59,9 +61,9 @@ class OrderSummaryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         cart = requireArguments().getParcelable<Cart>("Cart")!!
+        cart.extraFeeType = Cart.NONE
 
-        val prompt = "${cart.getItemCount()} Items"
-        view.findViewById<TextView>(R.id.itemCountText).text = prompt
+        itemCountTextView = view.findViewById<TextView>(R.id.itemCountText)
 
         val cancelButt = view.findViewById<TextView>(R.id.cancelOrderButton)
         val confirmPrintButt = view.findViewById<TextView>(R.id.confirmAndPrint)
@@ -70,9 +72,10 @@ class OrderSummaryFragment : Fragment() {
         val chipGroup = view.findViewById<ChipGroup>(R.id.chipGroup)
         val rateTextView = view.findViewById<EditText>(R.id.surchargeDiscountEditText)
 
-        totalCostTextView.text = "Total: $${cart?.getSubTotalCost()}"
+        updateTotalSummaryView()
 
         chipGroup.setOnCheckedChangeListener { group, checkedId ->
+            cart.extraFeeType = Cart.NONE
             if (!cart.isEmpty()) {
                 val rateString = rateTextView.text.toString()
                 if (checkedId == R.id.surchargeChip && rateString.isNotEmpty()) {
@@ -81,7 +84,7 @@ class OrderSummaryFragment : Fragment() {
                     applyDiscount(rateString.toDouble() / 100.0)
                 }
                 else {
-                    totalCostTextView.text = "Total: $${cart?.getSubTotalCost()}"
+                    updateTotalSummaryView()
                 }
             }
         }
@@ -125,7 +128,7 @@ class OrderSummaryFragment : Fragment() {
         }
 
         val orderSummaryRecyclerView = view.findViewById<RecyclerView>(R.id.orderSummaryRecyclerList)
-        val adapter = cart?.let { CartSummaryViewAdapter(it) }
+        val adapter = CartSummaryViewAdapter(cart!!)
         val orderLayoutMan = LinearLayoutManager(context)
         orderSummaryRecyclerView.adapter = adapter
         orderSummaryRecyclerView.layoutManager = orderLayoutMan
@@ -141,12 +144,9 @@ class OrderSummaryFragment : Fragment() {
      * @param rate - should be in decimal form when importing
      */
     private fun applySurcharge(rate: Double) {
+        cart.extraFeeType = Cart.SURCHARGED
         cart.rate = rate
-        val subTotal = cart.getSubTotalCost()
-        val surchargePrice = cart.getExtraFee()
-        val total = cart.getFinalTotal(Cart.SURCHARGED)
-
-        totalCostTextView.text = "Sub total: $$subTotal\nSurcharge: +$$surchargePrice\nTotal: $${"%.2f".format(total)}"
+        updateTotalSummaryView()
     }
 
     /**
@@ -154,14 +154,21 @@ class OrderSummaryFragment : Fragment() {
      * @param rate - should be in decimal form when importing
      */
     private fun applyDiscount(rate: Double) {
+        cart.extraFeeType = Cart.DISCOUNTED
         cart.rate = rate
-        val subTotal = cart.getSubTotalCost()
-        val discount = cart.getExtraFee()
-        val total = cart.getFinalTotal(Cart.DISCOUNTED)
-
-        totalCostTextView.text = "Sub total: $$subTotal\nDiscount: -$$discount\nTotal: $${"%.2f".format(total)}"
+        updateTotalSummaryView()
     }
 
+    private fun updateTotalSummaryView() {
+        totalCostTextView.text = cart.finalTotalString()
+        itemCountTextView.text = "${cart.getItemCount()} Items"
+    }
+
+
+
+    /**
+     * Get customer details from edit texts
+     */
     private fun fetchCustomerDetails(view: View) {
         val nameIdEditText = view.findViewById<EditText>(R.id.idNameDetail)
         val phoneEditText = view.findViewById<EditText>(R.id.phoneNumEditText)
@@ -173,6 +180,9 @@ class OrderSummaryFragment : Fragment() {
                             addressEditText.text.toString(), commentEditText.text.toString())
     }
 
+    /**
+     * Shows the list of items added to cart
+     */
     inner class CartSummaryViewAdapter(private val cart: Cart) : RecyclerView.Adapter<CartSummaryViewAdapter.ItemOrderHolder>() {
 
         inner class ItemOrderHolder(v: View) : RecyclerView.ViewHolder(v) {
@@ -180,12 +190,33 @@ class OrderSummaryFragment : Fragment() {
             private val nameTxtView = v.findViewById<TextView>(R.id.orderItemName)
             private val priceTxtView = v.findViewById<TextView>(R.id.orderItemPrice)
             private val amountEditText = v.findViewById<TextInputEditText>(R.id.amountEditText)
+            private val increaseButton = v.findViewById<ImageView>(R.id.addItemCountButton)
+            private val decreaseButton = v.findViewById<ImageView>(R.id.minusItemCountButton)
 
-
-            fun bind(itemOrd: ItemOrder) {
+            fun bind(itemOrd: ItemOrder, position: Int) {
                 nameTxtView.text = itemOrd.item.name
                 priceTxtView.text = itemOrd.item.getPriceWithSign()
                 amountEditText.setText(itemOrd.amount.toString())
+
+                increaseButton.setOnClickListener {
+                    itemOrd.amount++
+                    amountEditText.setText(itemOrd.amount.toString())
+                    notifyItemChanged(position)
+                    updateTotalSummaryView()
+                }
+
+                decreaseButton.setOnClickListener {
+                    itemOrd.amount--
+                    amountEditText.setText(itemOrd.amount.toString())
+                    if (itemOrd.amount <= 0) {
+                        cart.removeOrder(itemOrd)
+                        notifyItemRemoved(position)
+                    }
+                    else {
+                        notifyItemChanged(position)
+                    }
+                    updateTotalSummaryView()
+                }
             }
         }
 
@@ -198,7 +229,7 @@ class OrderSummaryFragment : Fragment() {
         override fun onBindViewHolder(holder: ItemOrderHolder, position: Int) {
             val item = cart.get(position)
 
-            holder.bind(item)
+            holder.bind(item, position)
         }
 
         override fun getItemCount(): Int {

@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.PocketDocket" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.DocketOnScreen" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/dodgerblue</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
@@ -14,15 +14,15 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="Theme.PocketDocket.NoActionBar">
+    <style name="Theme.DocketOnScreen.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:statusBarColor" tools:targetApi="l">@color/black</item>
     </style>
 
-    <style name="Theme.PocketDocket.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.DocketOnScreen.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="Theme.PocketDocket.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="Theme.DocketOnScreen.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 <!--  Tool bar control colours  -->
     <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">

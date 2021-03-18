@@ -34,7 +34,7 @@ class OrderingFragment : Fragment() {
     private lateinit var orderAdapter: OrderItemViewAdapter
     private val categorySet = linkedSetOf<String>(defaultTab)
     private lateinit var currMenu: Catalogue
-    private lateinit var cart: Cart
+    private val cart = Cart()
     private lateinit var cartCountFab: CounterFab
     private var selectedTabName = defaultTab
     private lateinit var bottomAppBar: BottomAppBar
@@ -140,7 +140,7 @@ class OrderingFragment : Fragment() {
 
         if(this.arguments != null) {
             currMenu = arguments?.getParcelable<Catalogue>("Menu") as Catalogue
-            cart = Cart(currMenu.name!!)
+            cart.menuName = currMenu.name!!
             gatherCategories()
             val tabLayout = view.findViewById<TabLayout>(R.id.categoryTabLayout)
             setupTabs(tabLayout)
@@ -162,6 +162,7 @@ class OrderingFragment : Fragment() {
             val fabBehav = fabParams.behavior
             (fabBehav as FABScrollBehaviour).setIsAnchored(true)
 
+            notifyFABbadge()
             cartCountFab.setOnClickListener{
                 val summaryFragment = OrderSummaryFragment.newInstance()
                 val bundle = Bundle().apply { putParcelable("Cart", cart) }
