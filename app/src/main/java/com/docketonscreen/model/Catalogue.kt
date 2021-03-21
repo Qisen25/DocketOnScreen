@@ -3,7 +3,7 @@ package com.docketonscreen.model
 import android.os.Parcel
 import android.os.Parcelable
 
-data class Catalogue(val name: String?) : Parcelable {
+data class Catalogue(var name: String?) : Parcelable {
 
     private var items: MutableList<Item> = mutableListOf<Item>()
     var dbPrimaryId: Int = 0

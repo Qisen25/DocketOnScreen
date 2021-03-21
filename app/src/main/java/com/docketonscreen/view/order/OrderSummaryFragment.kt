@@ -14,11 +14,11 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.andremion.counterfab.CounterFab
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
 import com.itextpdf.text.Document
@@ -35,13 +35,13 @@ import java.io.FileOutputStream
 
 /**
  * Order summary fragment
+ * Users can edit cart, add details and print
  */
 class OrderSummaryFragment : Fragment() {
 
     private lateinit var totalCostTextView: TextView
     private lateinit var itemCountTextView: TextView
     private lateinit var cart: Cart
-    private lateinit var customerDetails: Array<String>
 
     private lateinit var nameIdEditText: EditText
     private lateinit var phoneEditText: EditText
@@ -51,6 +51,7 @@ class OrderSummaryFragment : Fragment() {
 
     private val textWatcher = object : TextWatcher {
         override fun afterTextChanged(s: Editable?) {
+
         }
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
         }
@@ -96,11 +97,7 @@ class OrderSummaryFragment : Fragment() {
         commentEditText = view.findViewById<EditText>(R.id.commentsTextEdit)
         numOfPplEditText = view.findViewById<EditText>(R.id.numOfPplEditText)
 
-//        nameIdEditText.addTextChangedListener(textWatcher)
-//        phoneEditText.addTextChangedListener(textWatcher)
-//        addressEditText.addTextChangedListener(textWatcher)
-//        commentEditText.addTextChangedListener(textWatcher)
-//        numOfPplEditText.addTextChangedListener(textWatcher)
+        setupDetailTextWatchers()
 
         loadCustomerDetailsIntoEditTexts()
         updateTotalSummaryView()
@@ -121,41 +118,12 @@ class OrderSummaryFragment : Fragment() {
         }
 
         confirmPrintButt.setOnClickListener {
-            try {
-                parentFragmentManager.popBackStack()
-                val document = Document()
-                val path = File(requireContext().externalCacheDir.toString())
-
-                val file = File(path, "Docket.pdf")
-
-                path.mkdir()
-
-                PdfWriter.getInstance(document, FileOutputStream(file.path))
-
-                document.open()
-
-                document.pageSize = PageSize.A7
-                document.addCreationDate()
-                document.addAuthor("Pocket Docket")
-
-                fetchCustomerDetails()
-
-                val buildPdf = PdfBuildHelper(cart, document, totalCostTextView.text.toString(), customerDetails)
-                buildPdf.build()
-
-                document.close()
-
-                val printManager = requireActivity().getSystemService(Context.PRINT_SERVICE) as PrintManager
-                val printAdapt = PrintAdapter(requireContext(), file.path)
-                printManager.print("Docket print", printAdapt, null)
-            }
-            catch (e: Exception) {
-                Log.e("File output error", e.message!!)
-            }
+            printDocketToPrinter()
         }
 
         cancelButt.setOnClickListener {
             fetchCustomerDetails()
+            println(cart.customerDetails)
             parentFragmentManager.popBackStack()
         }
 
@@ -196,31 +164,100 @@ class OrderSummaryFragment : Fragment() {
         itemCountTextView.text = "${cart.getItemCount()} Items"
     }
 
-
-
     /**
      * Get customer details from edit texts
      */
     private fun fetchCustomerDetails() {
-       customerDetails = arrayOf(nameIdEditText.text.toString(), numOfPplEditText.text.toString(),  phoneEditText.text.toString(),
-                            addressEditText.text.toString(), commentEditText.text.toString())
-
-        cart.customerDetails = customerDetails
+        // Name/ID/Table number
+        cart.customerDetails[Cart.IDNAME] = nameIdEditText.text.toString()
+        // Number of people
+        cart.customerDetails[Cart.NUMOFPPL] = numOfPplEditText.text.toString()
+        // Phone number
+        cart.customerDetails[Cart.PHONENO] = phoneEditText.text.toString()
+        // Address
+        cart.customerDetails[Cart.ADDRESS] = addressEditText.text.toString()
+        // Comments
+        cart.customerDetails[Cart.COMMENTS] = commentEditText.text.toString()
     }
 
+    /**
+     * Load details into edit texts
+     * This enables for details to be persistent when back to ordering fragment
+     */
     private fun loadCustomerDetailsIntoEditTexts() {
-        val editTexts = arrayOf<EditText>(nameIdEditText, numOfPplEditText,  phoneEditText,
-            addressEditText, commentEditText)
+        nameIdEditText.setText(cart.customerDetails[Cart.IDNAME])
+        numOfPplEditText.setText(cart.customerDetails[Cart.NUMOFPPL])
+        phoneEditText.setText(cart.customerDetails[Cart.PHONENO])
+        addressEditText.setText(cart.customerDetails[Cart.ADDRESS])
+        commentEditText.setText(cart.customerDetails[Cart.COMMENTS])
+    }
 
-        if (cart.customerDetails.isNotEmpty()) {
-            var i = 0
-            while (i < editTexts.size) {
-                if (!cart.customerDetails[i].isNullOrEmpty()) {
-                    editTexts[i].setText(cart.customerDetails[i])
-                }
-                i++
-            }
+    @RequiresApi(Build.VERSION_CODES.KITKAT)
+    private fun printDocketToPrinter() {
+        try {
+            parentFragmentManager.popBackStack()
+            val document = Document()
+            val path = File(requireContext().externalCacheDir.toString())
+
+            val file = File(path, "Docket.pdf")
+
+            path.mkdir()
+
+            PdfWriter.getInstance(document, FileOutputStream(file.path))
+
+            document.open()
+
+            document.pageSize = PageSize.A7
+            document.addCreationDate()
+            document.addAuthor("Pocket Docket")
+
+            fetchCustomerDetails()
+
+            val buildPdf = PdfBuildHelper(cart, document)
+            buildPdf.build()
+
+            document.close()
+
+            val printManager = requireActivity().getSystemService(Context.PRINT_SERVICE) as PrintManager
+            val printAdapt = PrintAdapter(requireContext(), file.path)
+            printManager.print("Docket print", printAdapt, null)
         }
+        catch (e: Exception) {
+            Log.e("File output error", e.message!!)
+        }
+    }
+
+    /**
+     * Set up watchers that help keep track of detail edit texts values.
+     * Each edit has separate listener to avoid race condition.
+     * Previously used same listener and all but 1 edit were empty when backing to
+     * the order fragment and returning to this fragment after.
+     */
+    private fun setupDetailTextWatchers() {
+        nameIdEditText.addTextChangedListener(onTextChanged = { charSequence: CharSequence?,
+                                                                i: Int, i1: Int, i2: Int ->
+            cart.customerDetails[Cart.IDNAME] = charSequence.toString()
+        })
+
+        phoneEditText.addTextChangedListener(onTextChanged = { charSequence: CharSequence?,
+                                                               i: Int, i1: Int, i2: Int ->
+            cart.customerDetails[Cart.PHONENO] = charSequence.toString()
+        })
+
+        addressEditText.addTextChangedListener(onTextChanged = { charSequence: CharSequence?,
+                                                                 i: Int, i1: Int, i2: Int ->
+            cart.customerDetails[Cart.ADDRESS] = charSequence.toString()
+        })
+
+        commentEditText.addTextChangedListener(onTextChanged = { charSequence: CharSequence?,
+                                                                 i: Int, i1: Int, i2: Int ->
+            cart.customerDetails[Cart.COMMENTS] = charSequence.toString()
+        })
+
+        numOfPplEditText.addTextChangedListener(onTextChanged = { charSequence: CharSequence?,
+                                                                  i: Int, i1: Int, i2: Int ->
+            cart.customerDetails[Cart.NUMOFPPL] = charSequence.toString()
+        })
     }
 
     /**

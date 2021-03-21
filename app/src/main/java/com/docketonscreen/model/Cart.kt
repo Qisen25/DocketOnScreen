@@ -10,8 +10,9 @@ class Cart(var menuName: String = "") : Parcelable{
     private val cartList: MutableList<ItemOrder> = mutableListOf()
     var rate = 0.0
     var extraFeeType = 0
-    var comments = ""
-    var customerDetails: Array<String> = arrayOf()
+    var customerDetails: LinkedHashMap<String, String>
+        = linkedMapOf(Pair(Cart.IDNAME, ""), Pair(Cart.PHONENO, ""), Pair(Cart.NUMOFPPL, ""),
+            Pair(Cart.ADDRESS, ""), Pair(Cart.COMMENTS, ""))
 
     constructor(parcel: Parcel) : this(parcel.readString()!!) {
         rate = parcel.readDouble()
@@ -56,6 +57,10 @@ class Cart(var menuName: String = "") : Parcelable{
         return totalCount
     }
 
+    /**
+     * Get cost of items in cart without extra fees applied
+     * @return subtotal (Real number)
+     */
     fun getSubTotalCost(): Double {
         var total = 0.0
 
@@ -66,11 +71,19 @@ class Cart(var menuName: String = "") : Parcelable{
         return total
     }
 
+    /**
+     * Get the amount of surcharge or discount that could be applied
+     * @return extra fee (Real number)
+     */
     fun getExtraFee(): Double {
         val extra = getSubTotalCost() * rate
         return extra
     }
 
+    /**
+     * Get final cost with all extra fees applied
+     * @return finalTotal (Real number)
+     */
     fun getFinalTotal(): Double {
         val subTotal = getSubTotalCost()
         var total = subTotal
@@ -84,6 +97,10 @@ class Cart(var menuName: String = "") : Parcelable{
         return total
     }
 
+    /**
+     * Get a string that shows the cost details
+     * @return string describing subtotal, discount/surcharge and final total
+     */
     fun finalTotalString(): String {
         if (extraFeeType == SURCHARGED) {
             return "Sub total: $${getSubTotalCost()}\nSurcharge: +$${getExtraFee()}\nTotal: $${"%.2f".format(getFinalTotal())}"
@@ -103,12 +120,15 @@ class Cart(var menuName: String = "") : Parcelable{
         cartList.clear()
     }
 
+    /**
+     * Clear cart if to start new order
+     */
     fun reset() {
         clear()
         extraFeeType = 0
         rate = 0.0
-        customerDetails = arrayOf()
-        comments = ""
+        customerDetails = linkedMapOf(Pair(Cart.IDNAME, ""), Pair(Cart.PHONENO, ""), Pair(Cart.NUMOFPPL, ""),
+                            Pair(Cart.ADDRESS, ""), Pair(Cart.COMMENTS, ""))
     }
 
     fun getItemOrderList(): MutableList<ItemOrder> {
@@ -122,12 +142,19 @@ class Cart(var menuName: String = "") : Parcelable{
     override fun writeToParcel(dest: Parcel?, flags: Int) {
         dest?.writeList(cartList)
         dest?.writeString(menuName)
+        dest?.writeMap(customerDetails)
     }
 
     companion object CREATOR : Parcelable.Creator<Cart> {
-        var NONE = 0
-        var DISCOUNTED = 1
-        var SURCHARGED = 2
+        const val NONE = 0
+        const val DISCOUNTED = 1
+        const val SURCHARGED = 2
+
+        const val IDNAME = "idName"
+        const val PHONENO = "phoneNo"
+        const val NUMOFPPL = "numOfPpl"
+        const val ADDRESS = "address"
+        const val COMMENTS = "comments"
 
         override fun createFromParcel(parcel: Parcel): Cart {
             return Cart(parcel)

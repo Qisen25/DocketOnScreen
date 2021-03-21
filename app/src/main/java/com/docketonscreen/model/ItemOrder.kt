@@ -20,6 +20,10 @@ data class ItemOrder(val item: Item, var amount: Int = 1) : Parcelable{
         return other is ItemOrder && other.item.equals(this.item)
     }
 
+    /**
+     * Get total cost for this item order
+     * @return: Price (Real number)
+     */
     fun getCost(): Double {
         return item.price * amount
     }

@@ -10,7 +10,7 @@ import com.docketonscreen.model.Cart
  * Class that helps build order into a pdf document
  * Note: I assume any print could take this documents but I'm not sure about POS thermal printers
  */
-class PdfBuildHelper(val cart: Cart, private val document: Document, private val costSummary: String, private val customerDetails: Array<String>) {
+class PdfBuildHelper(val cart: Cart, private val document: Document) {
 
     /**
      * Function to build/style document
@@ -34,13 +34,13 @@ class PdfBuildHelper(val cart: Cart, private val document: Document, private val
         val standoutFont = Font(baseFont, 13.0f, Font.BOLD, BaseColor.BLACK)
 
         // Add comments
-        addItem("Comments: ${customerDetails[4]}", Element.ALIGN_MIDDLE, standoutFont)
+        addItem("Comments: ${cart.customerDetails[Cart.COMMENTS]}", Element.ALIGN_MIDDLE, standoutFont)
 
         addLineSeparator(document)
 
         // Add item count and cost summary
         addItem("${cart.getItemCount()} Items", Element.ALIGN_RIGHT, standoutFont)
-        addItem(costSummary, Element.ALIGN_RIGHT, standoutFont)
+        addItem(cart.finalTotalString(), Element.ALIGN_RIGHT, standoutFont)
 
         addLineSeparator(document)
 
@@ -49,19 +49,17 @@ class PdfBuildHelper(val cart: Cart, private val document: Document, private val
 
         addLineSeparator(document)
 
-        // Append Customer details
-        var i = 0
         // exclude comment details since included above
-        while (i < 4) {
-            if (!customerDetails[i].isNullOrEmpty()) {
-                if (i == 1) {
-                    addItem("# of Seats: ${customerDetails[i]}", Element.ALIGN_LEFT, standoutFont)
+        for (detail in cart.customerDetails) {
+            if (detail.value.isNotEmpty()) {
+                println(detail.value)
+                if (detail.key == Cart.NUMOFPPL) {
+                    addItem("# of Seats: ${detail.value}", Element.ALIGN_LEFT, standoutFont)
                 }
                 else {
-                    addItem(customerDetails[i], Element.ALIGN_LEFT, standoutFont)
+                    addItem(detail.value, Element.ALIGN_LEFT, standoutFont)
                 }
             }
-            i++
         }
     }
 

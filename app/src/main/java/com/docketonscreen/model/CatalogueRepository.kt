@@ -48,6 +48,10 @@ class CatalogueRepository {
             }
         }
 
+        /**
+         * Load items from database
+         * @param menuId - Integer primary key ID
+         */
         private fun loadItems(menuId: Int): MutableList<Item> {
             val cols = arrayOf("name", "price", "category", "description")
             val itemCurs = ItemCursor(db.query(SchemaInfo.Items.TABLE_NAME, null, "menuId = $menuId", null, null, null, null))
@@ -71,7 +75,7 @@ class CatalogueRepository {
         /**
          * Add menu to list and database
          */
-        fun addMenu(cat: Catalogue) {
+        fun addMenu(cat: Catalogue): Long {
             // Primary key is auto incremented in this step but it also matches above step
             val cv = ContentValues()
             cv.put(SchemaInfo.Menus.COLUMN_NAME, cat.name)
@@ -79,9 +83,16 @@ class CatalogueRepository {
 
             cat.dbPrimaryId = rowId.toInt()
             menus.add(cat)
+
+            return rowId
         }
 
-        fun addItem(menu: Catalogue, item: Item) {
+        /**
+         * Add an item to a catalogue
+         * @param menu - A catalogue to manipulate
+         * @param item - An item to add to the menu param
+         */
+        fun addItem(menu: Catalogue, item: Item): Long {
 
             item.menuId = menu.dbPrimaryId
 
@@ -99,8 +110,15 @@ class CatalogueRepository {
             item.dbPrimaryId = rowId.toInt()
 
             menu.getItems().add(item)
+
+            return rowId
         }
 
+        /**
+         * Remove item from catalogue and database
+         * @param menu - A catalogue that contains an item
+         * @param item - An Item associated with supplied menu param
+         */
         fun removeItem(menu: Catalogue, item: Item): Int {
             val index = menu.getItems().indexOf(item)
 
@@ -113,7 +131,11 @@ class CatalogueRepository {
             return index
         }
 
-        fun removeMenu(menu: Catalogue) {
+        /**
+         * Remove catalogue from the list of menus and database
+         * @param menu - A catalogue to remove from list and database
+         */
+        fun removeMenu(menu: Catalogue): Int {
             val id = menu.dbPrimaryId
             val whereArgs = arrayOf(id.toString())
             menus.remove(menu)
@@ -122,9 +144,30 @@ class CatalogueRepository {
             db.delete(SchemaInfo.Items.TABLE_NAME, "menuId = ?", whereArgs)
             // Finally delete menu
             db.delete(SchemaInfo.Menus.TABLE_NAME, "_id = ?", whereArgs)
+
+            return id
         }
 
-        fun updateItem(item: Item) {
+        /**
+         * update an item in database
+         * @param item - An Item to update
+         */
+        fun updateMenu(catalogue: Catalogue): Int {
+
+            val cv = ContentValues()
+            cv.put(SchemaInfo.Menus.COLUMN_NAME, catalogue.name)
+
+            val whereArgs = arrayOf(catalogue.dbPrimaryId.toString())
+            val rowsAffected = db.update(SchemaInfo.Menus.TABLE_NAME, cv,"_id = ? ", whereArgs)
+
+            return rowsAffected
+        }
+
+        /**
+         * update an item in database
+         * @param item - An Item to update
+         */
+        fun updateItem(item: Item): Int {
 
             val cv = ContentValues()
             cv.put(SchemaInfo.Items.COLUMN_NAME, item.name)
@@ -133,7 +176,9 @@ class CatalogueRepository {
             cv.put(SchemaInfo.Items.COLUMN_DESCRIPTION, item.description)
 
             val whereArgs = arrayOf(item.dbPrimaryId.toString())
-            db.update(SchemaInfo.Items.TABLE_NAME, cv,"_id = ? ", whereArgs)
+            val rowsAffected = db.update(SchemaInfo.Items.TABLE_NAME, cv,"_id = ? ", whereArgs)
+
+            return rowsAffected
         }
     }
 }
