@@ -52,7 +52,6 @@ class OrderingFragment : Fragment() {
 
         super.onCreateOptionsMenu(menu, inflater)
 
-//        inflater.inflate(R.menu.menu_main, menu)
         inflater.inflate(R.menu.order_helper_items, menu)
 
         val searchItem = menu.findItem(R.id.searcher)
@@ -60,21 +59,23 @@ class OrderingFragment : Fragment() {
         val hideItem = menu.findItem(R.id.hideBar)
         val searchView = searchItem.actionView as SearchView
 
-//        val cartFab = activity?.findViewById<FloatingActionButton>(R.id.cartFab)
         searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
+                return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                return false
+                filterBySearchTerm(newText!!)
+                return true
             }
         })
 
+        // Cart fab button when searching
         searchView.setOnSearchClickListener {
             cartCountFab.hide()
         }
 
+        // Make cart fab reappear on stop search
         searchView.setOnCloseListener {
             cartCountFab.show()
             false
@@ -127,17 +128,6 @@ class OrderingFragment : Fragment() {
             cartCountFab.visibility = View.VISIBLE
             bottomAppBar.performShow()
         }
-
-//        val categoryRecycler = view.findViewById<RecyclerView>(R.id.categoryRecyclerBar)
-//        categoryAdapter = CategoryRecyclerViewAdapter()
-//        val categoryLayoutMan = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-//        categoryRecycler.layoutManager = categoryLayoutMan
-//        categoryRecycler.adapter = categoryAdapter
-//
-//        // Add dividers to list view
-//        val itemDec = DividerItemDecoration(context, DividerItemDecoration.HORIZONTAL)
-//        itemDec.setDrawable(context?.getDrawable(R.drawable.horizontal_divider)!!)
-//        categoryRecycler.addItemDecoration(itemDec)
 
         if(this.arguments != null) {
             currMenu = arguments?.getParcelable<Catalogue>("Menu") as Catalogue
@@ -235,6 +225,22 @@ class OrderingFragment : Fragment() {
         else {
             cartCountFab.count = 0
         }
+    }
+
+    /**
+     * Filter by search
+     */
+    private fun filterBySearchTerm(term: String) {
+        val searchRelatedList = mutableListOf<Item>()
+        for (item in currMenu.getItems()) {
+            // Check if item has similar name and category matches current selected tab
+            if (item.name.contains(term) &&
+                (item.category == selectedTabName || selectedTabName == defaultTab)) {
+                searchRelatedList.add(item)
+            }
+        }
+
+        orderAdapter.filterItemsWhenTabSelected(searchRelatedList)
     }
 
     /**
