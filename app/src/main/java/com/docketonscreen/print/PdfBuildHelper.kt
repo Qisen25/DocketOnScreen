@@ -5,28 +5,38 @@ import com.itextpdf.text.pdf.BaseFont
 import com.itextpdf.text.pdf.draw.LineSeparator
 import com.itextpdf.text.pdf.draw.VerticalPositionMark
 import com.docketonscreen.model.Cart
+import com.itextpdf.text.pdf.PdfName
+import com.itextpdf.text.pdf.PdfString
 
 /**
  * Class that helps build order into a pdf document
  * Note: I assume any print could take this documents but I'm not sure about POS thermal printers
  */
-class PdfBuildHelper(val cart: Cart, private val document: Document) {
+class PdfBuildHelper(val cart: Cart, val document: Document, private val filename: String) {
 
     /**
      * Function to build/style document
      */
     fun build() {
 
+        document.pageSize = PageSize.A7
+        document.addCreationDate()
+        document.addAuthor("Pocket Docket")
+
         // Add Title
-        val baseFont = BaseFont.createFont("assets/serif.otf", "UTF-8", BaseFont.EMBEDDED)
-        val titleFont = Font(baseFont, 20.0f, Font.BOLD, BaseColor.BLACK)
-        addItem("${cart.menuName} Docket", Element.ALIGN_CENTER, titleFont)
+        val baseFont = BaseFont.createFont(filename, "UTF-8", BaseFont.EMBEDDED)
+//        val titleFont = Font(baseFont, 20.0f, Font.BOLD, BaseColor.BLACK)
+//        addItem("${cart.menuName} Docket", Element.ALIGN_CENTER, titleFont)
+        document.addTitle("${cart.menuName} Docket")
 
         addLineSeparator(document)
 
         // Add cart items
         for (i in cart.getItemOrderList()) {
             addLeftAndRightText("${i.amount}x ${i.item.name}", "$${"%.2f".format(i.getCost())}")
+            // Keep track of item details
+            document.setAccessibleAttribute(PdfName("Item=${i.item.name}"), PdfString(i.item.name))
+            document.setAccessibleAttribute(PdfName("ItemOrderPrice"), PdfString(i.getCost().toString()))
         }
 
         addLineSeparator(document)
@@ -38,9 +48,15 @@ class PdfBuildHelper(val cart: Cart, private val document: Document) {
 
         addLineSeparator(document)
 
+
         // Add item count and cost summary
+        val cartItemCount = cart.getItemCount()
         addItem("${cart.getItemCount()} Items", Element.ALIGN_RIGHT, standoutFont)
         addItem(cart.finalTotalString(), Element.ALIGN_RIGHT, standoutFont)
+
+        // Keep track of cost summary details
+        document.setAccessibleAttribute(PdfName("ItemCount"), PdfString(cartItemCount.toString()))
+        document.setAccessibleAttribute(PdfName("FinalCostSummary"), PdfString(cart.finalTotalString()))
 
         addLineSeparator(document)
 

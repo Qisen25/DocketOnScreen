@@ -19,7 +19,15 @@ android {
 
     testOptions {
         unitTests.includeAndroidResources = true
+        unitTests.all {
+            testLogging {
+                // Log assert errors to build console
+                events "failed"
+                exceptionFormat "full"
+            }
+        }
     }
+    sourceSets.test.resources.srcDirs += ["src/main"]
 
     buildTypes {
         release {
@@ -62,3 +70,9 @@ dependencies {
 
     implementation 'com.itextpdf:itextg:5.5.10'
 }
+
+// Make sure unit tests run after every build
+afterEvaluate {
+    assembleDebug.dependsOn test
+}
+

@@ -207,13 +207,9 @@ class OrderSummaryFragment : Fragment() {
 
             document.open()
 
-            document.pageSize = PageSize.A7
-            document.addCreationDate()
-            document.addAuthor("Pocket Docket")
-
             fetchCustomerDetails()
 
-            val buildPdf = PdfBuildHelper(cart, document)
+            val buildPdf = PdfBuildHelper(cart, document, "assets/serif.otf")
             buildPdf.build()
 
             document.close()
