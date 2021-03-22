@@ -21,10 +21,6 @@ class FABScrollBehaviour(private val context: Context, private val attrs: Attrib
 
     override fun onStartNestedScroll(coordinatorLayout: CoordinatorLayout, child: FloatingActionButton,
                                      directTargetChild: View, target: View, axes: Int, type: Int): Boolean {
-        if (target is RecyclerView) {
-            println("Recyc view height " + target.adapter!!.itemCount)
-        }
-
         return true
     }
 

@@ -14,6 +14,9 @@ import androidx.annotation.RequiresApi
 import java.io.*
 import java.lang.Exception
 
+/**
+ * Printer adapter to allow printing pdf
+ */
 @RequiresApi(Build.VERSION_CODES.KITKAT)
 class PrintAdapter(context: Context, val path: String) : PrintDocumentAdapter() {
     override fun onLayout(oldAttributes: PrintAttributes?, newAttributes: PrintAttributes?, cancellationSignal: CancellationSignal?, callback: LayoutResultCallback?, extras: Bundle?) {

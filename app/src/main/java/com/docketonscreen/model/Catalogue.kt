@@ -3,20 +3,19 @@ package com.docketonscreen.model
 import android.os.Parcel
 import android.os.Parcelable
 
+/**
+ * Class for storing catalogue/menu info
+ */
 data class Catalogue(var name: String?) : Parcelable {
 
     private var items: MutableList<Item> = mutableListOf<Item>()
     var dbPrimaryId: Int = 0
 
-//    init {
-//        items.add(Item("poop", 100.0, "pop", "My dinner yummeee"))
-//    }
-
     constructor(parcel: Parcel) : this(parcel.readString()) {
 
     }
 
-    fun addItems(item: Item) {
+    fun addItem(item: Item) {
         items.add(item)
     }
 
