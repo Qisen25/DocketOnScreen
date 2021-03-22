@@ -6,6 +6,8 @@ import android.content.DialogInterface
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
@@ -36,6 +38,7 @@ class CatalogueManagerFragment : Fragment() {
 
     private var listOfMenus: MutableList<Catalogue> = CatalogueRepository.menus
     private lateinit var menuAdapter: MenuRecyclerViewAdapter
+    private var isEditMenu = false
 
     companion object {
         fun newInstance(): CatalogueManagerFragment = CatalogueManagerFragment()
@@ -53,6 +56,10 @@ class CatalogueManagerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val tb = view.rootView.findViewById<Toolbar>(R.id.toolbar)
+        tb.visibility = View.VISIBLE
+        tb.title = "Manage Menus"
+
         // Make sure frame under support tool bar
         view.rootView.findViewById<FrameLayout>(R.id.manageMenuContainer).updateLayoutParams<ConstraintLayout.LayoutParams> {
             topToTop = ConstraintLayout.LayoutParams.UNSET
@@ -60,13 +67,10 @@ class CatalogueManagerFragment : Fragment() {
             topToBottom = R.id.toolbar
         }
 
-//        val listv = view.findViewById<ListView>(R.id.recipe_list_view)
         val submitContainer = view.findViewById<LinearLayout>(R.id.addMenuInputContainer)
         val submitButt =  view.findViewById<Button>(R.id.addMenuNameButton)
         val textInpLay = view.findViewById<TextInputLayout>(R.id.textInputLay)
         val textEditInp = view.findViewById<TextInputEditText>(R.id.textintedit)
-        val tb = view.rootView.findViewById<Toolbar>(R.id.toolbar)
-        tb.visibility = View.VISIBLE
 
         val floatAddButton = view.findViewById<FloatingActionButton>(R.id.fabAddMenu)
 
@@ -85,8 +89,6 @@ class CatalogueManagerFragment : Fragment() {
         }
 
         val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-
-        tb.title = "Menus"
 
         submitButt.setOnClickListener {
 //            this.listOfMenus.add(Catalogue(txt.text.toString()))
@@ -120,7 +122,6 @@ class CatalogueManagerFragment : Fragment() {
             if (keyCode == KeyEvent.KEYCODE_ENTER) {
                 val menu = Catalogue(textEditInp.text.toString())
 
-//                listOfMenus.add(menu)
                 CatalogueRepository.addMenu(menu)
 
                 menuAdapter.notifyItemInserted(listOfMenus.count() - 1)
@@ -128,7 +129,6 @@ class CatalogueManagerFragment : Fragment() {
                 submitContainer.visibility = View.INVISIBLE
                 // hide keyboard
                 imm.hideSoftInputFromWindow(textEditInp.windowToken, 0)
-//                floatAddButton.visibility = View.VISIBLE
                 return@setOnKeyListener true
             }
             false
@@ -149,7 +149,7 @@ class CatalogueManagerFragment : Fragment() {
             override fun onGlobalLayout() {
                 val heightDiff: Int = view.rootView.height - view.height
 
-                if (heightDiff > 400) { // Value should be at least keyboard's height
+                if (heightDiff > 400 && !isEditMenu) { // Value should be at least keyboard's height
                     // Show input box as key board rises
                     floatAddButton.visibility = View.INVISIBLE
                     submitContainer.visibility = View.VISIBLE
@@ -165,6 +165,7 @@ class CatalogueManagerFragment : Fragment() {
      * Set up buttons when on swipe
      */
     private fun addSwipeButtons(list: MutableList<MyButton>) {
+        // Delete swiper
         val deleteSwipeButton = MyButton(context,
                 "Delete",
                 30,
@@ -195,6 +196,7 @@ class CatalogueManagerFragment : Fragment() {
                     }
                 })
 
+        // Manage item swiper
         val manageItemSwipeButton = MyButton(context,
                 "Manage Items",
                 30,
@@ -211,6 +213,7 @@ class CatalogueManagerFragment : Fragment() {
                     }
                 })
 
+        // Edit swiper
         val editSwipeButton = MyButton(context,
                 "Edit",
                 30,
@@ -218,7 +221,42 @@ class CatalogueManagerFragment : Fragment() {
                 Color.parseColor("#1E90FF"),
                 object: MyButtonClickListener{
                     override fun onClick(pos: Int) {
-                        Toast.makeText(context, "Edit not implemented yet", Toast.LENGTH_SHORT).show()
+                        val dialog = AlertDialog.Builder(context)
+                        isEditMenu = true
+                        dialog.setTitle("Edit Menu")
+
+                        val inputView = LayoutInflater.from(context)
+                            .inflate(R.layout.edit_menu_name, view as ViewGroup, false)
+
+                        val nameInput = inputView.findViewById<TextInputEditText>(R.id.editMenuNameInput)
+                        dialog.setView(inputView)
+
+                        // Save menu name change
+                        dialog.setPositiveButton("Save", object: DialogInterface.OnClickListener {
+                            override fun onClick(dialog: DialogInterface?, which: Int) {
+                                if (nameInput.text!!.isNotEmpty()) {
+                                    val editedMenu = listOfMenus[pos]
+                                    editedMenu.name = nameInput.text.toString()
+                                    CatalogueRepository.updateMenu(editedMenu)
+                                    menuAdapter.notifyItemChanged(pos)
+                                }
+
+                                // Wait for notify recycler to finish since it takes time
+                                // and may force up keyboard add menu pop up event
+                                Handler(Looper.getMainLooper()).postDelayed({
+                                    isEditMenu = false
+                                }, 80)
+                            }
+                        })
+
+                        dialog.setNegativeButton("Cancel", object: DialogInterface.OnClickListener {
+                            override fun onClick(dialog: DialogInterface?, which: Int) {
+                                dialog!!.cancel()
+                                isEditMenu = false
+                            }
+                        })
+
+                        dialog.show()
                     }
                 })
 

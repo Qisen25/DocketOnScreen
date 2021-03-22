@@ -29,6 +29,7 @@
         android:layout_marginRight="20dp"
         android:backgroundTint="#EE851C"
         android:src="@android:drawable/ic_input_add"
+        app:tint="@color/white"
         app:backgroundTint="@android:color/holo_purple"
         app:layout_behavior="com.docketonscreen.behaviour.FABScrollBehaviour"/>
 

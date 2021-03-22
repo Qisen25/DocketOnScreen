@@ -25,9 +25,8 @@ class PdfBuildHelper(val cart: Cart, val document: Document, private val filenam
 
         // Add Title
         val baseFont = BaseFont.createFont(filename, "UTF-8", BaseFont.EMBEDDED)
-//        val titleFont = Font(baseFont, 20.0f, Font.BOLD, BaseColor.BLACK)
-//        addItem("${cart.menuName} Docket", Element.ALIGN_CENTER, titleFont)
-        document.addTitle("${cart.menuName} Docket")
+        val titleFont = Font(baseFont, 20.0f, Font.BOLD, BaseColor.BLACK)
+        addItem("${cart.menuName} Docket", Element.ALIGN_CENTER, titleFont)
 
         addLineSeparator(document)
 

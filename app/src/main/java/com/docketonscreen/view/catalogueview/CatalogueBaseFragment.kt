@@ -35,11 +35,6 @@ class CatalogueBaseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Make sure frame under support tool bar
-//        view.findViewById<FrameLayout>(R.id.manageMenuContainer).updateLayoutParams<ConstraintLayout.LayoutParams> {
-//            topToBottom = R.id.toolbar
-//        }
-
         val mainAct = (activity as MainActivity)
 
         // Get action bar with back button

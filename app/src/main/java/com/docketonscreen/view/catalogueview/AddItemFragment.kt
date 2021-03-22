@@ -46,7 +46,7 @@ class AddItemFragment : Fragment() {
 
         // Access toolbar via root view and change title to Items since this is the item fragment
         val tb = view.rootView.findViewById<Toolbar>(R.id.toolbar)
-        tb.title = "Items"
+        tb.title = "Manage Items"
 
         // Get menu name bundle sent MenuAdderFragment and add it to database
         if(this.arguments != null) {
