@@ -8,7 +8,35 @@
     android:orientation="vertical"
     tools:context=".view.order.OrderSummaryFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/orderSumToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:background="@color/dodgerblue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <TextView
+            android:id="@+id/clearItemsButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/select_background_ripple"
+            android:drawableTop="@drawable/ic_baseline_delete_sweep_40"
+            android:clickable="true"
+            android:textColor="@color/dodgerblue"
+            android:gravity="center"
+            android:layout_gravity="right"
+            android:layout_marginRight="20dp"
+            >
+
+        </TextView>
+
+    </androidx.appcompat.widget.Toolbar>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/orderSummaryRecyclerList"
@@ -21,7 +49,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.9"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/orderSumToolbar">
 
     </androidx.recyclerview.widget.RecyclerView>
 
@@ -39,7 +67,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_begin="16dp" />
+            app:layout_constraintGuide_begin="17dp" />
 
         <EditText
             android:id="@+id/idNameDetail"
@@ -238,6 +266,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="2"
+        android:background="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.6"
@@ -245,14 +274,14 @@
         app:layout_constraintTop_toBottomOf="@+id/priceCardView">
 
         <TextView
-            android:id="@+id/cancelOrderButton"
+            android:id="@+id/goBackButton"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_weight="1"
             android:background="@drawable/select_background_ripple"
             android:clickable="true"
             android:gravity="center"
-            android:text="Cancel"
+            android:text="Go Back"
             android:textColor="@color/dodgerblue"
             android:textStyle="bold" />
 

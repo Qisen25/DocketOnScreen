@@ -91,7 +91,6 @@ class CatalogueManagerFragment : Fragment() {
         val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
         submitButt.setOnClickListener {
-//            this.listOfMenus.add(Catalogue(txt.text.toString()))
             CatalogueRepository.addMenu(Catalogue(textEditInp.text.toString()))
 
             menuAdapter.notifyItemInserted(listOfMenus.count() - 1);

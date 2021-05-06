@@ -54,7 +54,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="80dp"
         android:layout_marginRight="80dp"
-        android:background="@drawable/ic_baseline_add_24"
+        android:background="@drawable/ic_baseline_add_24_black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/barrier3"
         app:layout_constraintStart_toEndOf="@id/amountInpLayout"

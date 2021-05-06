@@ -1,6 +1,8 @@
 package com.docketonscreen.view.order
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Build
 import android.os.Bundle
 import android.print.PrintManager
@@ -14,6 +16,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.appcompat.widget.Toolbar
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -22,10 +25,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
 import com.itextpdf.text.Document
-import com.itextpdf.text.PageSize
 import com.itextpdf.text.pdf.PdfWriter
 import com.docketonscreen.R
 import com.docketonscreen.model.Cart
+import com.docketonscreen.model.CatalogueRepository
 import com.docketonscreen.model.ItemOrder
 import com.docketonscreen.print.PdfBuildHelper
 import com.docketonscreen.print.PrintAdapter
@@ -84,7 +87,8 @@ class OrderSummaryFragment : Fragment() {
 
         itemCountTextView = view.findViewById<TextView>(R.id.itemCountText)
 
-        val cancelButt = view.findViewById<TextView>(R.id.cancelOrderButton)
+        val clearItemsButt = view.findViewById<TextView>(R.id.clearItemsButton)
+        val backButt = view.findViewById<TextView>(R.id.goBackButton)
         val confirmPrintButt = view.findViewById<TextView>(R.id.confirmAndPrint)
         totalCostTextView = view.findViewById<TextView>(R.id.totalCostTextView)
 
@@ -121,7 +125,7 @@ class OrderSummaryFragment : Fragment() {
             printDocketToPrinter()
         }
 
-        cancelButt.setOnClickListener {
+        backButt.setOnClickListener {
             fetchCustomerDetails()
             println(cart.customerDetails)
             parentFragmentManager.popBackStack()
@@ -137,6 +141,30 @@ class OrderSummaryFragment : Fragment() {
         val itemDec = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
         itemDec.setDrawable(context?.getDrawable(R.drawable.divider)!!)
         orderSummaryRecyclerView.addItemDecoration(itemDec)
+
+        clearItemsButt.setOnClickListener {
+            val alertDialog = AlertDialog.Builder(context)
+            alertDialog.setTitle("Confirm Delete")
+            alertDialog.setMessage("Are sure you want clear all items?")
+            alertDialog.setCancelable(true)
+
+            alertDialog.setPositiveButton("Yes", object: DialogInterface.OnClickListener{
+                override fun onClick(dialog: DialogInterface?, which: Int) {
+                    cart.reset()
+                    adapter.notifyDataSetChanged()
+                    updateTotalSummaryView()
+                }
+            })
+
+            alertDialog.setNegativeButton("No", object: DialogInterface.OnClickListener{
+                override fun onClick(dialog: DialogInterface?, which: Int) {
+                    dialog!!.cancel()
+                }
+            })
+
+            val alert = alertDialog.create()
+            alert.show()
+        }
     }
 
     /**
