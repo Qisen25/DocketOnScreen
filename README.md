@@ -8,8 +8,6 @@ may need to record sale orders of items on the go.
 ## Why build this?
 Kinda built this for fun to see if building an app with one activity and multiple fragments really does provide a faster and responsive UI compared to having more than one
 activity. So far this has met expectations. A simple but fast, responsive UI would be helpful in an environment where you are under pressure to take orders quickly. 
-There are many apps out there that have simple UI but are still not very fast or responsive regardless if you have a high/mid/low end phone, which leads to frustration 
-(experience this a lot :D).
 
 ## Features
 - Add, edit and remove menus/catalogues and its corresponding items. These are stored persistently via SQLite
