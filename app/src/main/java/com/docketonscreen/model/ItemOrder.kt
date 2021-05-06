@@ -28,6 +28,14 @@ data class ItemOrder(val item: Item, var amount: Int = 1) : Parcelable{
         return item.price * amount
     }
 
+    /**
+     * Get cost with dollar sign
+     * @return: Price (String)
+     */
+    fun getCostWithDollarSign(): String {
+        return "$${item.price * amount}"
+    }
+
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(amount)
     }

@@ -104,6 +104,7 @@ class OrderingFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_ordering, container, false)
         cartCountFab = view.findViewById<CounterFab>(R.id.cartFab)
+        cartCountFab.requestFocus()
         notifyFABbadge()
         return view
     }

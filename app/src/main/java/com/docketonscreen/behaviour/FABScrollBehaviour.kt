@@ -9,7 +9,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class FABScrollBehaviour(private val context: Context, private val attrs: AttributeSet) : FloatingActionButton.Behavior(context, attrs) {
+class FABScrollBehaviour(private val context: Context, private val attrs: AttributeSet?) : FloatingActionButton.Behavior(context, attrs) {
 
     // Prevent swiping of non scrollable situation from hiding/showing button independently from
     // anchored to something if true
@@ -44,13 +44,14 @@ class FABScrollBehaviour(private val context: Context, private val attrs: Attrib
         super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type, consumed)
 
         // Make sure view is not currently taking keyboard input
-        val imm = this.context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm = child.context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
+        println(consumed[consumed.size - 1])
         if(!imm.isAcceptingText) {
-            if (dyConsumed > 0 && child.visibility == View.VISIBLE) {
+            if (dyConsumed > 1 && child.visibility == View.VISIBLE) {
                 // Hide scrolling down
                 child.hide(hideListener)
-            } else if (dyConsumed < 0 && child.visibility != View.VISIBLE) {
+            } else if (dyConsumed < -1 && child.visibility != View.VISIBLE) {
                 // User scrolled up and the FAB is currently not visible -> show the FAB
                 child.show()
             } else if (dyUnconsumed < 0 && child.visibility != View.VISIBLE && !isAnchored) {
@@ -64,7 +65,7 @@ class FABScrollBehaviour(private val context: Context, private val attrs: Attrib
             }
         }
 
-        println("Child visible?: " + child.visibility + ", dyCons: " + dyConsumed + " dyUncons " + dyUnconsumed)
+        println("Child visible?: " + child.visibility + ", dyCons: " + dyConsumed + " dyUncons " + dyUnconsumed + " isAnchored " + isAnchored + " is keyboard up: " + imm.isAcceptingText)
     }
 
     fun setIsAnchored(bool: Boolean) {

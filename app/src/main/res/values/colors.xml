@@ -18,4 +18,6 @@
     <color name="gainsboro">#DCDCDC</color>
     <color name="whitesmoke">#F5F5F5</color>
     <color name="lime_green">#32CD32</color>
+    <color name="darker_gray">#a9a9a9</color>
+    <color name="dark_gray">#484848</color>
 </resources>

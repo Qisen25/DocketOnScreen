@@ -12,11 +12,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
-import androidx.appcompat.widget.Toolbar
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -28,7 +28,6 @@ import com.itextpdf.text.Document
 import com.itextpdf.text.pdf.PdfWriter
 import com.docketonscreen.R
 import com.docketonscreen.model.Cart
-import com.docketonscreen.model.CatalogueRepository
 import com.docketonscreen.model.ItemOrder
 import com.docketonscreen.print.PdfBuildHelper
 import com.docketonscreen.print.PrintAdapter
@@ -121,16 +120,6 @@ class OrderSummaryFragment : Fragment() {
             }
         }
 
-        confirmPrintButt.setOnClickListener {
-            printDocketToPrinter()
-        }
-
-        backButt.setOnClickListener {
-            fetchCustomerDetails()
-            println(cart.customerDetails)
-            parentFragmentManager.popBackStack()
-        }
-
         val orderSummaryRecyclerView = view.findViewById<RecyclerView>(R.id.orderSummaryRecyclerList)
         val adapter = CartSummaryViewAdapter(cart!!)
         val orderLayoutMan = LinearLayoutManager(context)
@@ -141,6 +130,21 @@ class OrderSummaryFragment : Fragment() {
         val itemDec = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
         itemDec.setDrawable(context?.getDrawable(R.drawable.divider)!!)
         orderSummaryRecyclerView.addItemDecoration(itemDec)
+
+        confirmPrintButt.setOnClickListener {
+            printDocketToPrinter()
+        }
+
+        backButt.setOnClickListener {
+            fetchCustomerDetails()
+            val imm = this.context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+            // Destroy recycler view to prevent bug input manager thinks that keyboard is still active
+            orderSummaryRecyclerView.adapter = null
+            parentFragmentManager.popBackStack()
+            requireActivity().currentFocus?.clearFocus()
+            view.rootView.requestFocus()
+        }
 
         clearItemsButt.setOnClickListener {
             val alertDialog = AlertDialog.Builder(context)
@@ -292,21 +296,24 @@ class OrderSummaryFragment : Fragment() {
         inner class ItemOrderHolder(v: View) : RecyclerView.ViewHolder(v) {
 
             private val nameTxtView = v.findViewById<TextView>(R.id.orderItemName)
-            private val priceTxtView = v.findViewById<TextView>(R.id.orderItemPrice)
+            private val totalPriceTxtView = v.findViewById<TextView>(R.id.orderItemTotalPrice)
+            private val eachPriceTxtView = v.findViewById<TextView>(R.id.itemPriceEach)
             private val amountEditText = v.findViewById<TextInputEditText>(R.id.amountEditText)
             private val increaseButton = v.findViewById<ImageView>(R.id.addItemCountButton)
             private val decreaseButton = v.findViewById<ImageView>(R.id.minusItemCountButton)
 
             fun bind(itemOrd: ItemOrder, position: Int) {
                 nameTxtView.text = itemOrd.item.name
-                priceTxtView.text = itemOrd.item.getPriceWithSign()
+                updateItemPricesTxtViews(itemOrd)
                 amountEditText.setText(itemOrd.amount.toString())
 
                 increaseButton.setOnClickListener {
                     itemOrd.amount++
                     amountEditText.setText(itemOrd.amount.toString())
                     notifyItemChanged(position)
+                    // Update after to make text views look more responsive not laggy on update
                     updateTotalSummaryView()
+                    updateItemPricesTxtViews(itemOrd)
                 }
 
                 decreaseButton.setOnClickListener {
@@ -320,6 +327,17 @@ class OrderSummaryFragment : Fragment() {
                         notifyItemChanged(position)
                     }
                     updateTotalSummaryView()
+                    updateItemPricesTxtViews(itemOrd)
+                }
+            }
+
+            private fun updateItemPricesTxtViews(itemOrd: ItemOrder) {
+                totalPriceTxtView.text = itemOrd.getCostWithDollarSign()
+                // Only update when amount is greater than 2 and less than 3
+                if (itemOrd.amount in 2..2) {
+                    eachPriceTxtView.text = "${itemOrd.item.getPriceWithSign()} each"
+                } else if (itemOrd.amount < 2) {
+                    eachPriceTxtView.text = "";
                 }
             }
         }

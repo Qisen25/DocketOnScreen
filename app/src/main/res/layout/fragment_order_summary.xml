@@ -21,6 +21,16 @@
         >
 
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Checkout"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:textColor="@color/white">
+
+        </TextView>
+
+        <TextView
             android:id="@+id/clearItemsButton"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -72,7 +82,10 @@
         <EditText
             android:id="@+id/idNameDetail"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
+            android:background="@drawable/order_summary_edit_text_style"
+            android:drawableLeft="@drawable/ic_baseline_person"
+            android:drawablePadding="10dp"
             android:ems="10"
             android:hint="Name/id/table"
             android:inputType="textPersonName"
@@ -84,7 +97,7 @@
         <TextView
             android:id="@+id/orderType"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:text="Order Type"
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
@@ -98,6 +111,7 @@
             android:id="@+id/extraInfoTextEdits"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:orientation="vertical"
             android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@id/commentsTextEdit"
@@ -109,7 +123,10 @@
             <EditText
                 android:id="@+id/phoneNumEditText"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
+                android:background="@drawable/order_summary_edit_text_style"
+                android:drawableLeft="@drawable/ic_baseline_phone"
+                android:drawablePadding="10dp"
                 android:ems="10"
                 android:hint="phone number"
                 android:inputType="phone"
@@ -118,7 +135,11 @@
             <EditText
                 android:id="@+id/addressEditText"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
+                android:background="@drawable/order_summary_edit_text_style"
+                android:drawableLeft="@drawable/ic_baseline_house"
+                android:drawablePadding="10dp"
+                android:layout_marginTop="4dp"
                 android:ems="15"
                 android:hint="House Address..."
                 android:maxLines="2"
@@ -129,10 +150,14 @@
         <EditText
             android:id="@+id/commentsTextEdit"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="185dp"
             android:layout_marginRight="185dp"
             android:layout_marginBottom="8dp"
+            android:background="@drawable/order_summary_edit_text_style"
+            android:drawableLeft="@drawable/ic_baseline_comment"
+            android:drawablePadding="10dp"
             android:ems="15"
             android:hint="Comments (optional)"
             android:inputType="textMultiLine"
@@ -146,17 +171,21 @@
 
         <EditText
             android:id="@+id/numOfPplEditText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="25dp"
             android:layout_marginRight="25dp"
+            android:layout_marginBottom="4dp"
+            android:background="@drawable/order_summary_edit_text_style"
+            android:drawableLeft="@drawable/ic_baseline_groups"
+            android:drawablePadding="10dp"
             android:ems="6"
+            android:hint="# of people"
             android:inputType="number"
             android:textSize="12dp"
-            android:hint="# of people"
             app:layout_constraintBottom_toTopOf="@+id/extraInfoTextEdits"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
