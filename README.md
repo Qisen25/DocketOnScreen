@@ -23,4 +23,4 @@ activity. So far this has met expectations. A simple but fast, responsive UI wou
 - Enable specification of item extra options.
 - History of orders.
 - Store and retrieve menus and items from a web service.
-- Work with POS printers. Currently only tested with Canon mg6400 series.
+- Work with POS printers (can't be bothered buying a POS printer at the moment lol). Currently only tested with Canon mg6400 series.
